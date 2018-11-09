@@ -6,15 +6,21 @@
 #include <fstream>
 #include <sys/time.h>
 #include <vector>
-#include <string>
-
+#include <string.h>
+#include <papi.h>
+#define FLOPS "-flops"
+#define L2MR "-l2mr"
+#define L3MR "-l3mr"
 #define TIME_RESOLUTION 1000000 // us
 #define MAX_THREADS 48 // maximum number of threads to run
 
-using namespace std;
-struct timeval t;
-long long unsigned initial_time;
-double clearcache [30000000];
-vector<long long unsigned> sequential_measurements;
-vector<long long unsigned> measurements[MAX_THREADS/4 + 1];	// position 0 is for the sequential version
+void utils_stop_timer (void); 
+void utils_clean_memory(void * xc, void * yc);
+void utils_stop_papi(int rep);
+void utils_start_papi(void);
+void utils_results(char const*);
+void utils_setup_papi(int repetitions, char const * type);
+int utils_read_dataset(char const * filename, double* xcomp, double* ycomp);
+void utils_clear_cache (void); 
+void utils_start_timer (void); 
 #endif 

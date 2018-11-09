@@ -16,10 +16,8 @@
 
 #para onde mandar mails
 #PBS -M a77763@alunos.uminho.pt
-
-
-touch /home/a77763/log/output.log 
-for i in {1..4}; do
-    export OMP_NUM_THREADS=$i
-    /home/a77763/bin/run > /home/a77763/log/output.log
-done
+module load papi/5.5.0 && module load gcc/4.8.2
+cd /home/a77763/OpenMP
+./bin/kmeans par 1 32 /home/a77763/OpenMP/datasets/input32.data
+./bin/kmeans par 1 32 /home/a77763/OpenMP/datasets/input32.data
+./bin/kmeans par 1 32 /home/a77763/OpenMP/datasets/input32.data

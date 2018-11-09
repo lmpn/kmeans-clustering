@@ -1,43 +1,37 @@
-CC= g++-6
-CFLAGS= -Xpreprocessor -fopenmp -lomp -O3 -std=c++11  -lm -g -Wno-unused-parameter
-SRC_DIR = src/
-BIN_DIR = bin/
-HEADER_DIR = header/
-OBJ_DIR = obj/
-SRC = $(wildcard $(SRC_DIR)*.cpp)
-OBJ = $(patsubst src/%.cpp,obj/%.o,$(SRC))
+SHELL = /bin/sh
+CXX= g++
+LD  =g++
+CXXFLAGS= -Xpreprocessor -fopenmp -O3 -std=c++11  -lm -g -Wno-unused-parameter -lpapi
+LIBS = -I/share/apps/papi/5.5.0/include -L/share/apps/papi/5.5.0/lib
+ 
 
+BIN_NAME = kmeans
+SRC_DIR = src
+BIN_DIR = bin
+HEADER_DIR = header
+BUILD_DIR = build
+ASM_DIR = asm
+SRC = $(wildcard $(SRC_DIR)/*.cpp)
+OBJ = $(patsubst src/%.cpp,build/%.o,$(SRC))
 ASM = $(patsubst src/%.cpp,asm/%.s,$(SRC))
+INCLUDES = -I$(HEADER_DIR)
+vpath %.cpp $(SRC_DIR)
+#######
+#RULES
+#######
 .DEFAULT_GOAL = all
 
 
-
-all: checkdirs $(OBJ) $(ASM) obj/main.o asm/main.s
-	$(CC) -o $(BIN_DIR)run -I$(HEADER_DIR) $(CFLAGS) obj/main.o
-
-obj/main.o: main.cpp
-	$(CC) -c -I$(HEADER_DIR) $(CFLAGS) $< -o $@
-
-asm/main.s: main.cpp
-	$(CC) -S -I$(HEADER_DIR) $(CFLAGS) $< -o $@
-
-#Create Assembly
-$(ASM): $(SRC)
-	$(CC) -S -I$(HEADER_DIR) $(CFLAGS) $< -o $@
-
-#Create Objects
-$(OBJ): $(SRC)
-	$(CC) -c -I$(HEADER_DIR) $(CFLAGS) $< -o $@
-
-
+$(BIN_DIR)/$(BIN_NAME):  $(OBJ)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) $(LIBS) -o $@ $(OBJ)
+$(BUILD_DIR)/%.o: %.cpp
+	$(CXX) -c $(CXXFLAGS) $(INCLUDES) $(LIBS) $< -o $@ 
+	
 checkdirs:
-	@mkdir -p build
-	@mkdir -p bin
+	@mkdir -p $(BUILD_DIR)
+	@mkdir -p $(BIN_DIR)
 
-install:
-	mkdir -p src bin obj asm header
-
-.PHONY: clean
+all: checkdirs $(BIN_DIR)/$(BIN_NAME)
 
 clean:
-	rm -rf bin/* obj/* asm/*
+	rm -rf $(BUILD_DIR)/* $(BIN_DIR)/* 
