@@ -8,9 +8,9 @@
 #include <vector>
 #include <string.h>
 #include <papi.h>
-#define FLOPS "-flops"
-#define L2MR "-l2mr"
-#define L3MR "-l3mr"
+#define FLOPS "flops"
+#define L2MR "l2mr"
+#define L3MR "l3mr"
 #define TIME_RESOLUTION 1000000 // us
 #define MAX_THREADS 48 // maximum number of threads to run
 

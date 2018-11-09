@@ -91,25 +91,22 @@ void utils_results(char const * type)
 {
 	int repetitions = time_measurement->size();
 	long long avg1 = 0, avg2 = 0, avg3 = 0;
-	cout << "reps" << repetitions << endl;
 	for(size_t i = 0; i < repetitions; i++)
 	{
 		avg1 += (*values)[0];
 		avg2 += (*values)[1];
 		avg3 += time_measurement->at(i);
 	}
-	cout << "a1" << avg1 << endl;
-	cout << "a2" << avg2 << endl;
-	cout << "a3" << avg3 << endl;
+
 	if(repetitions != 0)
 	{
-		cout << "Execution Time:"<<  avg3 / (double) 1000 / (double) repetitions << "ms\n"<< endl;
+		cout << "Execution Time:"<<  avg3 / (double) 1000 / (double) repetitions << "ms"<< endl;
 	}
-	else if(type != NULL && !strcmp(type,L3MR) == 0 && avg2 != 0)
+	if(type != NULL && !strcmp(type,L3MR) && avg2 != 0)
 		{cout << "Level 3 Miss Rate:"<< avg1/avg2 << endl;}
-	else if(type != NULL && !strcmp(type,L2MR) == 0 && avg2 != 0)
+	if(type != NULL && !strcmp(type,L2MR) && avg2 != 0)
 		{cout << "Level 2 Miss Rate:"<< avg1/avg2 << endl;}
-	else if(type != NULL && !strcmp(type,FLOPS) == 0 && avg2 != 0)
+	else if(type != NULL && !strcmp(type,FLOPS) && avg2 != 0)
 		{cout << "FLOPS:"<< avg1/avg2 << endl;}
 }
 
