@@ -56,6 +56,7 @@ int utils_read_dataset(char const * filename, double* xcomp, double* ycomp)
 
 void utils_setup_papi(int repetitions, char const * type)
 {
+	#ifdef PAPI
 	if (!strcmp(type,FLOPS))
 	{
 		numEvents = 2;
@@ -85,6 +86,7 @@ void utils_setup_papi(int repetitions, char const * type)
 	PAPI_library_init(PAPI_VER_CURRENT);
     PAPI_create_eventset(&eventSet);
  	PAPI_add_events(eventSet, events, 2); /* Start the counters */
+	#endif
 }
 
 void utils_results(char const * type)
@@ -93,8 +95,8 @@ void utils_results(char const * type)
 	long long avg1 = 0, avg2 = 0, avg3 = 0;
 	for(size_t i = 0; i < repetitions; i++)
 	{
-		avg1 += (*values)[0];
-		avg2 += (*values)[1];
+		//avg1 += (*values)[0];
+		//avg2 += (*values)[1];
 		avg3 += time_measurement->at(i);
 	}
 
@@ -110,17 +112,37 @@ void utils_results(char const * type)
 		{cout << "FLOPS:"<< avg1/avg2 << endl;}
 }
 
+
 void utils_start_papi()
 {
-	PAPI_start(eventSet);
+	#ifdef PAPI
+		PAPI_start(eventSet);
+	#endif	
 }
 
 
 void utils_stop_papi(int rep)
 {
-	PAPI_stop(eventSet, values[rep]);
+	#ifdef PAPI
+		PAPI_stop(eventSet, values[rep]);
+	#endif
 }
 
+
+
+void utils_save_results(char const * filename, double *xcomp, double *ycomp, unsigned char * sets)
+{
+    ofstream fout(filename, std::ios::out);
+	if( !fout ) 
+	{
+		cout << "error on write" << endl;
+	 	return;
+	}
+	for(;ycomp != NULL && xcomp != NULL && sets != NULL; xcomp++, sets++, ycomp++){
+		fout << *xcomp << " " << *ycomp << " " << *sets << endl;
+	}
+	fout.close();
+}
 
 void  utils_clean_memory(void * xc, void * yc)
 {
@@ -133,12 +155,15 @@ void  utils_clean_memory(void * xc, void * yc)
 		free(yc);
 	}
 	int repetitions = time_measurement->size();
-	for(int i = 0; i < repetitions; i++)
+	if(values != NULL)
 	{
-		free(values[i]);
+		for(int i = 0; i < repetitions; i++)
+		{
+			free(values[i]);
+		}
+		free(events);
+		free(values);
 	}
-	free(events);
-	free(values);
 	time_measurement->clear();
 	time_measurement->~vector();
 }

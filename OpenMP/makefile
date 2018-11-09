@@ -1,8 +1,13 @@
 SHELL = /bin/sh
 CXX= g++
 LD  =g++
-CXXFLAGS= -Xpreprocessor -fopenmp -O3 -std=c++11  -lm -g -Wno-unused-parameter -lpapi
-LIBS = -I/share/apps/papi/5.5.0/include -L/share/apps/papi/5.5.0/lib
+CXXFLAGS= -Xpreprocessor -fopenmp -O3 -std=c++11 -ggdb3 -Wno-unused-parameter
+
+ifneq ($(MACOS), yes)
+	LIBS = -I/share/apps/papi/5.5.0/include -L/share/apps/papi/5.5.0/lib
+	CXXFLAGS+= -lpapi
+endif
+
  
 
 BIN_NAME = kmeans

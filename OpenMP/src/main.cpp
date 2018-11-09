@@ -17,7 +17,7 @@ int main(int argc, char const *argv[])
     char const * papiOpt = NULL;
     double* xcomp = NULL;
     double* ycomp = NULL;
-    
+    unsigned char* sets = NULL; 
     if(argc < 5){
         fprintf(stderr, "Usage: ./bin/kmeans PAR|SEQ #REPETITIONS #SIZE DATASET_PATH PAPI_OPT(optional)\n");
         return -1;
@@ -56,14 +56,15 @@ int main(int argc, char const *argv[])
             utils_clear_cache();
             utils_start_papi();
             utils_start_timer();
-            kmc_seq();
+            sets = kmc_seq(3, size, xcomp, ycomp);
             utils_stop_timer();
             utils_stop_papi(i);
         }
     }
 
     utils_results(papiOpt);
-
+    utils_save_results("bin/kmc_out", xcomp, ycomp, sets);
+    utils_clean_memory(xcomp, ycomp); 
     return 0;
 }
 
