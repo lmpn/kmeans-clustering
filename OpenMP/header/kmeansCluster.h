@@ -1,5 +1,6 @@
 #ifndef KMCLUSTER_H
 #define KMCLUSTER_H
+#include <random>
 #include <float.h>
 #include <iostream>
 #include <stdio.h>

@@ -4,7 +4,8 @@
         "string": "cpp",
         "iosfwd": "cpp",
         "iostream": "cpp",
-        "cstdlib": "cpp"
+        "cstdlib": "cpp",
+        "cmath": "cpp"
     },
     "python.linting.pylintEnabled": true
 }

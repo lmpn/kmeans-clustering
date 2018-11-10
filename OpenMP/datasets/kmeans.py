@@ -35,28 +35,30 @@ C_old = np.zeros(C.shape)
 clusters = np.zeros(len(X))
 clusters_old = np.zeros(len(X))
 # Error func. - Distance between new centroids and old centroids
-error = dist(C, C_old, 0)
+error = dist(C, C_old, None)
 print(error)
 # Loop will run till the error becomes zero
 it = 0
-while error[0] != 0 and error[1] != 0 :
+while error != 0:
     it += 1
     # Assigning each value to its closest cluster
+    print("Assignment Step")
+    cl = ''
     for i in range(len(X)):
-        distances = []
-        for j in range(k):
-            distances.append(dist(X[i], C[j], ax=0))
-        print(distances)
+        distances = dist(X[i], C)
         cluster = np.argmin(distances)
-        print(cluster)
         clusters[i] = cluster
+        cl = cl + str(cluster)+'-'+str(distances[cluster]) + ' '
+    print(cl)
     # Storing the old centroid values
     C_old = deepcopy(C)
     # Finding the new centroids by taking the average value
+    print("Update Step")
     for i in range(k):
         points = [X[j] for j in range(len(X)) if clusters[j] == i]
         C[i] = np.mean(points, axis=0)
-    error = dist(C, C_old, ax=0)
+    error = dist(C, C_old, None)
+
 
 colors = ['r', 'g', 'b', 'y', 'c', 'm']
 fig, ax = plt.subplots()
@@ -66,4 +68,4 @@ for i in range(k):
         ax.scatter(points[:, 0], points[:, 1], s=7, c=colors[i])
 ax.scatter(C[:, 0], C[:, 1], marker='*', s=200, c='#050505')
 
-plt.show()
+#plt.show()
