@@ -1,75 +1,73 @@
 #include <kmeansCluster.h>
-
-unsigned char * kmc_seq(int clusters, int size, double *xcomp, double *ycomp)
+using namespace std;
+int * kmc_seq(int clusters, int size, double *xcomp, double *ycomp)
 {
     bool convergence = true;
-    unsigned char *sets = NULL;
-    unsigned char *temp = (unsigned char *) malloc(sizeof(unsigned char) * size);
-    double dist = -DBL_MAX;
-    double centroid[clusters*2];
+    int *sets = (int *) malloc(sizeof(int) * size);
     int p_set = -1;
+    double dist = DBL_MAX;
+    double centroid[clusters*2];
+    double centroid_old[clusters*2];
+    double size_factor = ((double) 1)/((double) size);
+    for(int i = 0 ; i < clusters; i++){
+        int sc = rand() % 32;
+        centroid[i*2] = xcomp[sc];
+        centroid[i*2+1] = ycomp[sc];
+    }
+
     do
     {
         convergence = true;
 /***************************************************
         Assignment Step
 ***************************************************/
-
+        //cout << "Assignment Step" << endl;
         for (int p = 0; p < size ;  p++)
         {
             for (int k = 0; k < clusters; k++)
             {
-                double xd = xcomp[p] - centroid[k];
-                double yd = ycomp[p] - centroid[k+1];
-                double k_p_dist = xd*xd + yd*yd;
+                double xd = xcomp[p] - centroid[k*2];
+                double yd = ycomp[p] - centroid[k*2+1];
+                double k_p_dist = sqrt(pow(xd,2) + pow(yd,2));
                 dist > k_p_dist ? dist = k_p_dist, p_set = k : 0;
             }
-            //fazer verificação 
-            temp[p] = p_set;
+            cout << p_set << endl;
+            sets[p] = p_set;
             p_set = -1;
-            dist = -DBL_MAX;
+            dist = DBL_MAX;
         }
-        if(sets == NULL) {
-            convergence = false;
-            sets = temp;
-            temp =(unsigned char *) malloc(sizeof(unsigned char) * size);
-        }
-        else
+        cout << endl;
+        
+        //cout << "Update Step" << endl;
+        for(int k = 0; k < clusters ; k++)
         {
-            for(int p = 0; p < size && convergence; p++)
-            {
-                convergence = convergence && (sets[p] != temp[p]);
-            }
-            if(!convergence)
-            {
-                for(int k = 0; k < clusters ; k++)
-                {
-                    centroid[k] = 0.0;
-                    centroid[k+1] = 0.0;
-                }
-                
-                for(int i = 0; i < size; i++)
-                {
-                    int p_set = temp[i];
-                    centroid[p_set] += xcomp[i];
-                    centroid[p_set+1] += ycomp[i]; 
-                }
-                for(int k = 0; k < clusters ; k++)
-                {
-                    centroid[k] /= size;
-                    centroid[k+1] /= size;
-                } 
-                free(sets);
-                sets = temp;
-                temp = (unsigned char *) malloc(sizeof(unsigned char) * size); 
-            }
-            else{
-                return temp;
-            }
-            
+            centroid_old[k*2] = centroid[k*2];
+            centroid[k*2] = 0.0;
+            centroid_old[k*2+1] = centroid[k*2+1];
+            centroid[k*2+1] = 0.0;
+            //printf("old%d: %.10f %.10f\n", k, centroid_old[k*2], centroid_old[k*2+1]);
         }
+        
+        for(int i = 0; i < size; i++)
+        {
+            int p_set = sets[i]*2;
+            centroid[p_set] += xcomp[i]*size_factor;
+            centroid[p_set+1] += ycomp[i]*size_factor; 
+        }
+        //cout << "Centroids"<< endl;
+        for(int k = 0; k < clusters; k++)
+        {
+            double xd = centroid[k*2] - centroid_old[k*2];
+            double yd = centroid[k*2+1] - centroid_old[k*2+1];
+            double k_p_dist = sqrt(pow(xd,2) + pow(yd,2)); 
+            convergence = convergence && (k_p_dist <= 0.00000);
+            //printf("new%d: %.10f %.10f\n", k, centroid[k*2], centroid[k*2+1]);
+            //printf("k_p_dist: %.10f\n", k_p_dist);
+        }
+        //printf("convergence: %d\n", convergence);
+
     }
-    while(!convergence);
-    return NULL;
+    while(!convergence );
+    return sets;
 }
 void kmc_par(){}

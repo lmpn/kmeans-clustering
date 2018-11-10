@@ -13,7 +13,7 @@
 #define L3MR "l3mr"
 #define TIME_RESOLUTION 1000000 // us
 #define MAX_THREADS 48 // maximum number of threads to run
-void utils_save_results(char const * , double *, double *, unsigned char * );
+void utils_save_results(char const * , double *, double *, int * , int);
 void utils_stop_timer (void);
 void utils_clean_memory(void * xc, void * yc);
 void utils_stop_papi(int rep);

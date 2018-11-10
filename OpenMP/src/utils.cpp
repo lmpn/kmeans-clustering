@@ -40,11 +40,11 @@ void utils_clear_cache (void)
 int utils_read_dataset(char const * filename, double* xcomp, double* ycomp)
 {
 	int size = 0;
-
-    ifstream fin(filename, std::ios::in);
+ 	FILE *fin;
+	fin = fopen(filename, "r");
     if(!fin) {cout<<"Error in read: "<< filename <<endl; return -1; }
-	double x,y;
-    while(fin >> x >> y){
+	double x = 0.0, y = 0.0;
+    while(fscanf(fin,"%lf %lf", &x, &y) != EOF){
 		*(xcomp++) = x;
 		*(ycomp++) = y;
     }
@@ -95,8 +95,10 @@ void utils_results(char const * type)
 	long long avg1 = 0, avg2 = 0, avg3 = 0;
 	for(size_t i = 0; i < repetitions; i++)
 	{
-		//avg1 += (*values)[0];
-		//avg2 += (*values)[1];
+		#ifdef PAPI
+		avg1 += (*values)[0];
+		avg2 += (*values)[1];
+		#endif
 		avg3 += time_measurement->at(i);
 	}
 
@@ -104,12 +106,14 @@ void utils_results(char const * type)
 	{
 		cout << "Execution Time:"<<  avg3 / (double) 1000 / (double) repetitions << "ms"<< endl;
 	}
+	#ifdef PAPI
 	if(type != NULL && !strcmp(type,L3MR) && avg2 != 0)
 		{cout << "Level 3 Miss Rate:"<< avg1/avg2 << endl;}
-	if(type != NULL && !strcmp(type,L2MR) && avg2 != 0)
+	else if(type != NULL && !strcmp(type,L2MR) && avg2 != 0)
 		{cout << "Level 2 Miss Rate:"<< avg1/avg2 << endl;}
 	else if(type != NULL && !strcmp(type,FLOPS) && avg2 != 0)
 		{cout << "FLOPS:"<< avg1/avg2 << endl;}
+	#endif
 }
 
 
@@ -130,7 +134,7 @@ void utils_stop_papi(int rep)
 
 
 
-void utils_save_results(char const * filename, double *xcomp, double *ycomp, unsigned char * sets)
+void utils_save_results(char const * filename, double *xcomp, double *ycomp, int * sets, int size)
 {
     ofstream fout(filename, std::ios::out);
 	if( !fout ) 
@@ -138,8 +142,10 @@ void utils_save_results(char const * filename, double *xcomp, double *ycomp, uns
 		cout << "error on write" << endl;
 	 	return;
 	}
-	for(;ycomp != NULL && xcomp != NULL && sets != NULL; xcomp++, sets++, ycomp++){
-		fout << *xcomp << " " << *ycomp << " " << *sets << endl;
+	
+	for(size_t i = 0; i < size; i++)
+	{
+		fout << xcomp[i] << "," << ycomp[i] << "," << sets[i] << endl;
 	}
 	fout.close();
 }
