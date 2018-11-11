@@ -6,3 +6,5 @@ build/*
 
 #Excluding extra files
 .DS_Store
+../.DS_Store
+.vscode/.DS_Store
