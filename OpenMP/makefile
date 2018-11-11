@@ -41,4 +41,4 @@ checkdirs:
 all: checkdirs $(BIN_DIR)/$(BIN_NAME)
 
 clean:
-	rm -rf $(BUILD_DIR)/* $(BIN_DIR)/* $(ASM_DIR)/* out outp
+	rm -rf $(BUILD_DIR)/* $(BIN_DIR)/* $(ASM_DIR)/* $(OBJ)/* out outp

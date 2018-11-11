@@ -9,7 +9,7 @@ fig, ax = plt.subplots()
 data = pd.read_csv('bin/kmc_out.csv',header=None, names = ["x","y","z"])
 print(data.shape)
 data.head()
-k = 6
+k = 4
 f1 = data["x"].values
 f2 = data["y"].values
 f3 = data["z"].values
