@@ -2,95 +2,95 @@
 using namespace std;
 int * kmc_seq(int clusters, int size, double *xcomp, double *ycomp)
 {
-    srand(time(NULL));
-    int p_set_idx         = -1;
-    int p_set             = 0;
-    int iter              = 0;
-    bool convergence      = false;
-    double error          = DBL_MAX;
-    double norm           = 0.0;
-    double min_dist       = DBL_MAX;
-    double xd             = 0.0;
-    double yd             = 0.0;
-    double k_p_dist       = 0.0;
-    double size_factor    = ((double) 1)/((double) size);
-    int *sets             = (int *) calloc(size,sizeof(int));
-    double *centroid      = (double*) malloc(sizeof(double)*clusters*2); 
-    double *centroid_old  = (double*) malloc(sizeof(double)*clusters*2);
-    double max            = -DBL_MAX;
-
+    std::mt19937 rng;
+    uint32_t seed_val;
+    rng.seed(seed_val);
+    int*    sets                      = (int *) calloc(size,sizeof(int));
+    int     point_set_idx             = 0;
+    int*    sets_counter              = (int *) calloc(clusters,sizeof(int));
+    int     current_point_cluster_idx = -1;
+    bool    convergence               = false;
+    double  dx                        = 0.0;
+    double  dy                        = 0.0;
+    double  max                       = -DBL_MAX;
+    double  norm                      = 0.0;
+    double  error                     = DBL_MAX;
+    double  minimun_distance          = DBL_MAX;
+    double  random_real               = 0.0;
+    double* centroid                  = (double*) malloc(sizeof(double)*clusters*2); 
+    double* centroid_old              = (double*) malloc(sizeof(double)*clusters*2);
+    double  centroid_point_distance   = 0.0;
     
     for(size_t i = 0; i < size; i++)
     {
         if(max < xcomp[i])
             max = xcomp[i];
-         if(max < ycomp[i])
+        if(max < ycomp[i])
             max = ycomp[i];  
     }
-    
 
-    std::default_random_engine generator;
-    std::uniform_real_distribution<double> uni(0,max); 
-    for(int i = 0 ; i < clusters; i++){
-        double random_integer = uni(generator);
-        centroid[i*2] = random_integer ;
-        random_integer = uni(generator);
-        centroid[i*2+1] = random_integer;
-        cout <<centroid[i*2] << " "<<centroid[i*2+1]<<endl;
+    uniform_real_distribution<double> urd_g(0,max); 
+    for(int i = 0 ; i < clusters*2; i++){
+        centroid[i] = urd_g(rng);
     }
 
-    while( convergence != true  && error > 0.0 && iter < 1000000)
+    while( error != 0.0)
     {
-        iter ++;
-        convergence = true;
-        for (int p_idx = 0; p_idx < size ;  p_idx++)
+
+
+        //"ASSIGNMENT STEP"
+        for (int point_idx = 0; point_idx < size ;  point_idx++)
         {
-            for (int p_k_idx = 0; p_k_idx < clusters; p_k_idx++)
+            for (int cluster_idx = 0; cluster_idx < clusters; cluster_idx++)
             {
-                xd = xcomp[p_idx] - centroid[p_k_idx*2];
-                yd = ycomp[p_idx] - centroid[p_k_idx*2+1];
-                k_p_dist = sqrt(pow(xd,2) + pow(yd,2));
-                if(min_dist > k_p_dist)
+                double dx = centroid[cluster_idx*2]   - xcomp[point_idx];
+                double dy = centroid[cluster_idx*2+1] - ycomp[point_idx];
+                double centroid_point_distance = sqrt(pow(dx,2.0) + pow(dy,2.0));
+                if(minimun_distance > centroid_point_distance)
                 {
-                    min_dist = k_p_dist; 
-                    p_set_idx = p_k_idx;
+                    minimun_distance = centroid_point_distance; 
+                    current_point_cluster_idx = cluster_idx;
                 }
             }
-            convergence = convergence && (sets[p_idx] == p_set_idx); 
-            sets[p_idx] = p_set_idx;
-            p_set_idx = -1;
-            min_dist = DBL_MAX;
+
+            sets_counter[current_point_cluster_idx]++;
+            sets[point_idx] = current_point_cluster_idx;
+            current_point_cluster_idx = -1;
+            minimun_distance = DBL_MAX;
         }
+
+
+
+
+        //DEEP COPY 
         for(int k_idx = 0; k_idx < clusters*2 ; k_idx++)
         {
             centroid_old[k_idx] = centroid[k_idx];
             centroid[k_idx] = 0.0;
         }
-        
+
+
+        //"UPDATE STEP"
         for(int i = 0; i < size; i++)
         {
-            p_set = sets[i]*2;
-            centroid[p_set] =centroid[p_set] + xcomp[i]*size_factor;
-            centroid[p_set+1] =centroid[p_set+1] + ycomp[i]*size_factor;
+            int point_set_idx = sets[i]*2;
+            centroid[point_set_idx] += xcomp[i];
+            centroid[point_set_idx+1] += ycomp[i];
         }
-        
-        for(int k = 0; k < clusters*2; k++)
+        for(int k = 0; k < clusters; k++)
         {
-            norm += pow((abs(centroid[k] - centroid_old[k])),2);
+            int set_size = sets_counter[k]; 
+            sets_counter[k] = 0;
+            centroid[k*2] = centroid[k*2]/ set_size;
+            centroid[k*2+1] = centroid[k*2+1]/ set_size;
+            norm += centroid[k*2]-centroid_old[k*2];
+            norm += centroid[k*2+1]-centroid_old[k*2+1];
         }
-        if ( error > sqrt(norm))
-        {
-            error = sqrt(norm);
-            printf("error change: \n%lf\n\n", error);
-        }
-        if(iter %1000 == 0){
-            printf("iter: %d\n", iter);
-            printf("error: %lf\n", error);
-        }
-        p_set_idx      = -1;
-        p_set          = 0;
+        error = norm;
+        current_point_cluster_idx      = -1;
+        point_set_idx          = 0;
         norm           = 0.0;
-        min_dist       = DBL_MAX;
+        minimun_distance       = DBL_MAX;
     }
     
     return sets;

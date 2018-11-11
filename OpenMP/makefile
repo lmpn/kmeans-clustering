@@ -13,6 +13,7 @@ endif
 BIN_NAME = kmeans
 SRC_DIR = src
 BIN_DIR = bin
+OBJ_DIR = obj
 HEADER_DIR = header
 BUILD_DIR = build
 ASM_DIR = asm
@@ -37,8 +38,10 @@ $(ASM_DIR)/%.s: %.cpp
 checkdirs:
 	@mkdir -p $(BUILD_DIR)
 	@mkdir -p $(BIN_DIR)
+	@mkdir -p $(OBJ_DIR)
+	@mkdir -p $(ASM_DIR)
 
 all: checkdirs $(BIN_DIR)/$(BIN_NAME)
 
 clean:
-	rm -rf $(BUILD_DIR)/* $(BIN_DIR)/* $(ASM_DIR)/* $(OBJ)/* out outp
+	rm -rf $(BUILD_DIR)/* $(BIN_DIR)/* $(ASM_DIR)/* $(OBJ_DIR)/* out outp

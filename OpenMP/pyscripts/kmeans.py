@@ -1,4 +1,4 @@
-
+#!/usr/local/bin/python3
 from copy import deepcopy
 import numpy as np
 import pandas as pd
@@ -20,11 +20,13 @@ def dist(a, b, ax=1):
         
 # X coordinates of random centroids
 # Y coordinates of random centroids
-C_x = np.random.randint(0, np.max(X), size=k)
+C_x = np.random.random( size=k)
+#C_x = np.array([0.35960278,0.9588218,0.55899405,0.8120786])
 # Y coordinates of random centroids
-C_y = np.random.randint(0, np.max(X), size=k)
+C_y = np.random.random(size=k)
+#C_y = np.array([0.5786185,  0.95735174,  0.0832264, 0.93886757]) 
 C = np.array(list(zip(C_x, C_y)), dtype=np.float32)
-print(C)
+
 plt.scatter(f1, f2, c='#050505', s=7)
 plt.scatter(C_x, C_y, marker='*', s=200, c='g')
 
@@ -37,27 +39,29 @@ clusters = np.zeros(len(X))
 clusters_old = np.zeros(len(X))
 # Error func. - Distance between new centroids and old centroids
 error = dist(C, C_old, None)
-print(error)
 # Loop will run till the error becomes zero
 it = 0
 while error != 0:
     it += 1
     # Assigning each value to its closest cluster
-    print("Assignment Step")
+    #print("Assignment Step")
     cl = ''
+    ok = ''
     for i in range(len(X)):
         distances = dist(X[i], C)
         cluster = np.argmin(distances)
         clusters[i] = cluster
+        ok = ok +str(cluster)+ ' ' 
         cl = cl + str(cluster)+'-'+str(distances[cluster]) + ' '
-    print(cl)
+    #print(ok)
     # Storing the old centroid values
     C_old = deepcopy(C)
     # Finding the new centroids by taking the average value
-    print("Update Step")
+    #print("Update Step")
     for i in range(k):
         points = [X[j] for j in range(len(X)) if clusters[j] == i]
         C[i] = np.mean(points, axis=0)
+        #print(C[i])
     error = dist(C, C_old, None)
 
 

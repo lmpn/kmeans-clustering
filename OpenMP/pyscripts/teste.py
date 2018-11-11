@@ -1,20 +1,23 @@
 #!/usr/local/bin/python3
 import unicodedata
+import random
 import string
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.datasets.samples_generator import make_blobs
 
 array=[4096,8096, 16192,32384]
+plt.rcParams['figure.figsize'] = (16, 9)
+plt.style.use('ggplot')
+fig, ax = plt.subplots()
 
 
 
-
-
+d = 10
 centers = np.array([np.array([1, 1]), np.array([-1, -1]), np.array([1, -1]), np.array([-1,1]) ])
 for x in array:
 	with open("input"+str(x)+".data","xb") as file:
-		X, labels_true = make_blobs(n_samples=x, centers=centers, cluster_std=0.7)
+		X = [ [random.uniform(0,d), random.uniform(0,d)] for i in range(x)]
 		st = ''
 		for row in X:
 			for col in row:
@@ -23,6 +26,8 @@ for x in array:
 		bytes = str.encode(st)
 		file.write(bytes)
 		file.close()
-		for r in range(len(centers)):
-			for c in range(len(centers[0])):
-				centers[r][c] =centers[r][c]*2 
+		d *= 2
+		ax.scatter(X[:][0], X[:][0], s=7, c='r')
+		plt.show()
+
+
