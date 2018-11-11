@@ -1,7 +1,7 @@
 SHELL = /bin/sh
 CXX= g++
 LD  =g++
-CXXFLAGS= -Xpreprocessor -fopenmp -O3 -std=c++11 -ggdb3 -Wno-unused-parameter
+CXXFLAGS= -Xpreprocessor -fopenmp -O3 -std=c++11 -g -ggdb3 -Wno-unused-parameter
 
 ifneq ($(MACOS), yes)
 	LIBS = -I/share/apps/papi/5.5.0/include -L/share/apps/papi/5.5.0/lib
@@ -27,9 +27,11 @@ vpath %.cpp $(SRC_DIR)
 .DEFAULT_GOAL = all
 
 
-$(BIN_DIR)/$(BIN_NAME):  $(OBJ)
+$(BIN_DIR)/$(BIN_NAME):  $(OBJ) $(ASM)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $(LIBS) -o $@ $(OBJ)
 $(BUILD_DIR)/%.o: %.cpp
+	$(CXX) -c $(CXXFLAGS) $(INCLUDES) $(LIBS) $< -o $@ 
+$(ASM_DIR)/%.s: %.cpp
 	$(CXX) -c $(CXXFLAGS) $(INCLUDES) $(LIBS) $< -o $@ 
 	
 checkdirs:
@@ -39,4 +41,4 @@ checkdirs:
 all: checkdirs $(BIN_DIR)/$(BIN_NAME)
 
 clean:
-	rm -rf $(BUILD_DIR)/* $(BIN_DIR)/* 
+	rm -rf $(BUILD_DIR)/* $(BIN_DIR)/* $(ASM_DIR)/* out outp

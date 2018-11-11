@@ -6,10 +6,10 @@ from matplotlib import pyplot as plt
 plt.rcParams['figure.figsize'] = (16, 9)
 plt.style.use('ggplot')
 
-data = pd.read_csv('datasets/input2048.csv')
+data = pd.read_csv('datasets/input4096.csv')
 print(data.shape)
-data.head()
-k = 3
+data.head
+k = 5
 
 f1 = data['x'].values
 f2 = data['y'].values
@@ -19,10 +19,11 @@ def dist(a, b, ax=1):
     return np.linalg.norm(a - b, axis=ax)
         
 # X coordinates of random centroids
-C_x = [7.02904,5.72611,5.32975] 
 # Y coordinates of random centroids
-C_y = [9.13869,5.63526,6.69299]
-C = np.array(list(zip(C_x, C_y)), dtype=np.float64)
+C_x = np.random.randint(0, np.max(X), size=k)
+# Y coordinates of random centroids
+C_y = np.random.randint(0, np.max(X), size=k)
+C = np.array(list(zip(C_x, C_y)), dtype=np.float32)
 print(C)
 plt.scatter(f1, f2, c='#050505', s=7)
 plt.scatter(C_x, C_y, marker='*', s=200, c='g')
@@ -68,4 +69,4 @@ for i in range(k):
         ax.scatter(points[:, 0], points[:, 1], s=7, c=colors[i])
 ax.scatter(C[:, 0], C[:, 1], marker='*', s=200, c='#050505')
 
-#plt.show()
+plt.show()

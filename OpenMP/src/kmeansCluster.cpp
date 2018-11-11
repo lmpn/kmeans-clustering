@@ -2,71 +2,139 @@
 using namespace std;
 int * kmc_seq(int clusters, int size, double *xcomp, double *ycomp)
 {
+    srand(time(NULL));
     bool convergence = true;
     int *sets = (int *) malloc(sizeof(int) * size);
-    int p_set = -1;
-    double dist = DBL_MAX;
-    double centroid[3*2] = {7.02904,9.13869,5.72611,5.63526,5.32975,6.69299 };
+    int p_set_idx = -1;
+    double min_dist = DBL_MAX;
+    double centroid[clusters*2]; 
     double centroid_old[clusters*2];
     double size_factor = ((double) 1)/((double) size);
-    /*for(int i = 0 ; i < clusters; i++){
+    cout<< size<<endl;
+    for(int i = 0 ; i < clusters; i++){
+        
         int sc = rand() % size;
         centroid[i*2] = xcomp[sc];
         centroid[i*2+1] = ycomp[sc];
-    }*/
+    }
 
+    do
+    {
+        convergence = true;
+        cout << "Assignment Step" << endl;
+        for (int p_idx = 0; p_idx < size ;  p_idx++)
+        {
+            cout << p_idx<<endl;
+            for (int p_k_idx = 0; p_k_idx < clusters; p_k_idx++)
+            {
+                cout << "k:"<< p_k_idx<<endl;
+                double xd = xcomp[p_k_idx] - centroid[p_k_idx*2];
+                double yd = ycomp[p_k_idx] - centroid[p_k_idx*2+1];
+                double k_p_dist = sqrt(pow(xd,2) + pow(yd,2));
+                min(min_dist, k_p_dist) == k_p_dist ?
+                    min_dist = k_p_dist, p_set_idx = p_k_idx : 
+                    0;
+            }
+            sets[p_idx] = p_set_idx;
+            p_set_idx = -1;
+            min_dist = DBL_MAX;
+        }
+        
+        cout << "Update Step" << endl;
+        for(int k_idx = 0; k_idx < clusters*2 ; k_idx++)
+        {
+            centroid_old[k_idx] = centroid[k_idx];
+            centroid[k_idx] = 0.0;
+        }
+        
+        for(int i = 0; i < size; i++)
+        {
+            int p_set = sets[i]*clusters;
+            centroid[p_set] += xcomp[i]*size_factor;
+            centroid[p_set+1] += ycomp[i]*size_factor; 
+        }
+        double norm = 0.0;
+        for(int k = 0; k < clusters*2; k++)
+        {
+            norm += pow((abs(centroid[k]) - abs(centroid_old[k])),2);
+        }
+        convergence = sqrt(norm) == 0;
+        cout << sqrt(norm)<< endl;
+    }
+    while(!convergence );
+    return sets;
+}
+void kmc_par(){}
+
+
+int * kmc_seq2(int clusters, int size, double *xcomp, double *ycomp)
+{
+    bool convergence = true;
+    int *sets = NULL;
+    int *temp = (int *) malloc(sizeof(int) * size);
+    double dist = DBL_MAX;
+    double centroid[clusters*2];
+    int p_set = -1;
     do
     {
         convergence = true;
 /***************************************************
         Assignment Step
 ***************************************************/
-        cout << "Assignment Step" << endl;
-        for (int p = 0; p < size ;  p++)
+        for (int p_idx = 0; p_idx < size ;  p_idx++)
         {
-            for (int k = 0; k < clusters; k++)
+            for (int p_k_idx = 0; p_k_idx < clusters; p_k_idx++)
             {
-                double xd = xcomp[p] - centroid[k*2];
-                double yd = ycomp[p] - centroid[k*2+1];
-                double k_p_dist = sqrt(pow(xd,2) + pow(yd,2));
-                printf("%lf\n", k_p_dist);
-                min(dist, k_p_dist) == k_p_dist ?
-                    dist = k_p_dist, p_set = k : 
-                    0;
+                double xd = xcomp[p_idx] - centroid[p_k_idx];
+                double yd = ycomp[p_idx] - centroid[p_k_idx+1];
+                double k_p_dist = xd*xd + yd*yd;
+                dist > k_p_dist ? dist = k_p_dist, p_set = p_k_idx : 0;
             }
-            printf("%d-%lf\n",p_set, dist);
-            sets[p] = p_set;
+            //fazer verificação 
+            temp[p_idx] = p_set;
             p_set = -1;
-            dist = DBL_MAX;
+            dist = -DBL_MAX;
         }
-        printf("\n");
-        
-        cout << "Update Step" << endl;
-        for(int k = 0; k < clusters ; k++)
+        if(sets == NULL) {
+            convergence = false;
+            sets = temp;
+            temp =(int *) malloc(sizeof(int) * size);
+        }
+        else
         {
-            centroid_old[k*2] = centroid[k*2];
-            centroid[k*2] = 0.0;
-            centroid_old[k*2+1] = centroid[k*2+1];
-            centroid[k*2+1] = 0.0;
-            //printf("old%d: %.10f %.10f\n", k, centroid_old[k*2], centroid_old[k*2+1]);
+            for(int p = 0; p < size && convergence; p++)
+            {
+                convergence = convergence && (sets[p] != temp[p]);
+            }
+            if(!convergence)
+            {
+                for(int k = 0; k < clusters ; k++)
+                {
+                    centroid[k] = 0.0;
+                    centroid[k+1] = 0.0;
+                }
+                
+                for(int i = 0; i < size; i++)
+                {
+                    int p_set = temp[i];
+                    centroid[p_set] += xcomp[i];
+                    centroid[p_set+1] += ycomp[i]; 
+                }
+                for(int k = 0; k < clusters ; k++)
+                {
+                    centroid[k] /= size;
+                    centroid[k+1] /= size;
+                } 
+                free(sets);
+                sets = temp;
+                temp = (int *) malloc(sizeof(int) * size); 
+            }
+            else{
+                return temp;
+            }
+            
         }
-        
-        for(int i = 0; i < size; i++)
-        {
-            int p_set = sets[i]*2;
-            centroid[p_set] += xcomp[i]*size_factor;
-            centroid[p_set+1] += ycomp[i]*size_factor; 
-        }
-        //cout << "Centroids"<< endl;
-        double norm = 0.0;
-        for(int k = 0; k < clusters; k++)
-        {
-            norm += pow((centroid[k*2] - centroid_old[k*2]),2);
-            norm += pow((centroid[k*2+1] - centroid_old[k*2+1]),2);
-        }
-        convergence = sqrt(norm) == 0;
     }
-    while(!convergence );
-    return sets;
+    while(!convergence);
+    return NULL;
 }
-void kmc_par(){}

@@ -6,7 +6,7 @@
         {
             "label": "make",
             "type": "shell",
-            "command": "make",
+            "command": "export MACOS=yes && make clean && make",
             "problemMatcher": [
                 "$gcc"
             ]
