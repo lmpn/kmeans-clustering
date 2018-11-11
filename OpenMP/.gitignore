@@ -3,3 +3,6 @@ obj/*
 asm/*
 bin/*
 build/*
+
+#Excluding extra files
+.DS_Store
