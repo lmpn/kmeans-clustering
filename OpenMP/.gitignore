@@ -1,0 +1,5 @@
+#Excluding compilation dirs
+obj/*
+asm/*
+bin/*
+build/*
