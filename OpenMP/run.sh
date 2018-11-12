@@ -18,4 +18,6 @@
 #PBS -M a77763@alunos.uminho.pt
 module load papi/5.5.0 && module load gcc/4.8.2
 cd /home/a77763/PCP/OpenMP
-./bin/kmeans seq 1 4 16192 datasets/input16192.data flops
+./bin/kmeans seq 100 4 16192 datasets/input16192.data flops
+./bin/kmeans seq 100 4 16192 datasets/input16192.data l2mr
+./bin/kmeans seq 100 4 16192 datasets/input16192.data l3mr
