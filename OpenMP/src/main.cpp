@@ -34,7 +34,6 @@ int main(int argc, char const *argv[])
     papiOpt = argv[6];
     xcomp = (double *) malloc(sizeof(double)* size);
     ycomp = (double *) malloc(sizeof(double)* size);
-    utils_setup(repetitions, );
     int utils_error = utils_read_dataset(filename,xcomp,ycomp);
 
     if(utils_error == -1)

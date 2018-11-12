@@ -20,7 +20,7 @@ int * kmc_seq(int clusters, int size, double *xcomp, double *ycomp)
     double* centroid                  = (double*) malloc(sizeof(double)*clusters*2); 
     double* centroid_old              = (double*) malloc(sizeof(double)*clusters*2);
     double  centroid_point_distance   = 0.0;
-    
+    //double reduction + sets = 0
     for(size_t i = 0; i < size; i++)
     {
         if(max < xcomp[i])
@@ -28,10 +28,12 @@ int * kmc_seq(int clusters, int size, double *xcomp, double *ycomp)
         if(max < ycomp[i])
             max = ycomp[i];  
     }
-
+    //sets_counter = 0
     uniform_real_distribution<double> urd_g(0,max); 
-    for(int i = 0 ; i < clusters*2; i++){
-        centroid[i] = urd_g(rng);
+    for(int i = 0 ; i < clusters; i++){
+        centroid[i*2] = urd_g(rng);
+        centroid[1+i*2] = urd_g(rng);
+        //sets_counter[i] = 0;
     }
 
     while( error != 0.0)

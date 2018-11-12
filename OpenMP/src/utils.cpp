@@ -12,12 +12,6 @@ int eventSet = PAPI_NULL;
 int *events;
 
 
-
-
-
-
-
-
 void utils_start_timer (void) 
 {
 	gettimeofday(&t, NULL);
@@ -120,7 +114,8 @@ void utils_results(char const * type)
 	else if(type != NULL && !strcmp(type,FLOPS) && avg2 != 0)
 		{
 			double ct = (double) avg1/(double)avg2;
-			cout << "FLOPS:"<< ct << endl;}
+			cout << "FLOPS:"<< ct << endl;
+		}
 	#endif
 }
 
