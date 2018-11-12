@@ -25,6 +25,8 @@ void utils_stop_timer (void)
 	long long unsigned final_time = t.tv_sec * TIME_RESOLUTION + t.tv_usec;
 	time_measurement->push_back(final_time - initial_time);
 }
+
+
 void utils_clear_cache (void) 
 {
 	for (unsigned i = 0; i < 30000000; ++i)

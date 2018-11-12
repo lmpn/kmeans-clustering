@@ -45,7 +45,6 @@ int main(int argc, char const *argv[])
     {
         for(int i = 0; i < repetitions; i++ )
         {
-            cout << "it" << endl;
             utils_clear_cache();
             utils_start_timer();
             kmc_par();
@@ -57,9 +56,9 @@ int main(int argc, char const *argv[])
         utils_setup_papi(repetitions, papiOpt);
         for(int i = 0; i < repetitions; i++ )
         {
+            utils_clear_cache();
             utils_start_papi();
             utils_start_timer();
-            utils_clear_cache();
             sets = kmc_seq(clusters, size, xcomp, ycomp);
             utils_stop_timer();
             utils_stop_papi(i);

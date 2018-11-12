@@ -2,21 +2,22 @@
 using namespace std;
 int * kmc_seq(int clusters, int size, double *xcomp, double *ycomp)
 {
+    //Random
     std::mt19937 rng;
     uint32_t seed_val;
     rng.seed(seed_val);
+
     int*    sets                      = (int *) calloc(size,sizeof(int));
     int     point_set_idx             = 0;
     int*    sets_counter              = (int *) calloc(clusters,sizeof(int));
     int     current_point_cluster_idx = -1;
-    bool    convergence               = false;
-    double  dx                        = 0.0;
-    double  dy                        = 0.0;
     double  max                       = -DBL_MAX;
     double  norm                      = 0.0;
     double  error                     = DBL_MAX;
     double  minimun_distance          = DBL_MAX;
     double  random_real               = 0.0;
+
+
     double* centroid                  = (double*) malloc(sizeof(double)*clusters*2); 
     double* centroid_old              = (double*) malloc(sizeof(double)*clusters*2);
     double  centroid_point_distance   = 0.0;

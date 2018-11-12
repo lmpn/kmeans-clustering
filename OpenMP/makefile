@@ -8,8 +8,6 @@ ifneq ($(MACOS), yes)
 	CXXFLAGS+= -lpapi -DPAPI
 endif
 
- 
-
 BIN_NAME = kmeans
 SRC_DIR = src
 BIN_DIR = bin
