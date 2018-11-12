@@ -11,6 +11,8 @@
 #define FLOPS "flops"
 #define L2MR "l2mr"
 #define L3MR "l3mr"
+#define PAR "par"
+#define SEQ "seq"
 #define TIME_RESOLUTION 1000000 // us
 #define MAX_THREADS 48 // maximum number of threads to run
 void utils_save_results(char const * , double *, double *, int * , int);

@@ -1,7 +1,6 @@
 #include <utils.h>
 #include <kmeansCluster.h>
-#define PAR "par"
-#define SEQ "seq"
+
 using namespace std;
 
 
