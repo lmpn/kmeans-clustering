@@ -104,12 +104,12 @@ void utils_results(char const * type)
 	if(type != NULL && !strcmp(type,L3MR) && avg2 != 0)
 		{
 			double ct = (double) avg1/(double)avg2;
-			cout << "Level 3 Miss Rate:"<< avg1/avg2 << endl;
+			cout << "Level 3 Miss Rate:"<< ct << endl;
 		}
 	else if(type != NULL && !strcmp(type,L2MR) && avg2 != 0)
 		{
 			double ct = (double) avg1/(double)avg2;
-			cout << "Level 2 Miss Rate:"<< avg1/avg2 << endl;
+			cout << "Level 2 Miss Rate:"<< ct << endl;
 		}
 	else if(type != NULL && !strcmp(type,FLOPS) && avg2 != 0)
 		{
