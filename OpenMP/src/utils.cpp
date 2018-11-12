@@ -62,7 +62,7 @@ void utils_setup_papi(int repetitions, char const * type)
 		numEvents = 2;
 		events = (int*) malloc(numEvents * sizeof(int));
     	events[0] = PAPI_FP_OPS; 
- 		events[1] = PAPI_TOT_CYC; 
+ 		events[1] = PAPI_TOT_CYC;
 	}
 	else if (!strcmp(type, L2MR))
 	{
@@ -71,7 +71,7 @@ void utils_setup_papi(int repetitions, char const * type)
  		events[0] = PAPI_L2_TCM; 
     	events[1] = PAPI_L1_DCM;
   	}
-  	else if (!strcmp(type, L2MR))
+  	else if (!strcmp(type, L3MR))
   	{
   	  	numEvents = 2;
 		events = (int*) malloc(numEvents * sizeof( int));
@@ -108,11 +108,19 @@ void utils_results(char const * type)
 	}
 	#ifdef PAPI
 	if(type != NULL && !strcmp(type,L3MR) && avg2 != 0)
-		{cout << "Level 3 Miss Rate:"<< avg1/avg2 << endl;}
+		{
+			double ct = (double) avg1/(double)avg2;
+			cout << "Level 3 Miss Rate:"<< avg1/avg2 << endl;
+		}
 	else if(type != NULL && !strcmp(type,L2MR) && avg2 != 0)
-		{cout << "Level 2 Miss Rate:"<< avg1/avg2 << endl;}
+		{
+			double ct = (double) avg1/(double)avg2;
+			cout << "Level 2 Miss Rate:"<< avg1/avg2 << endl;
+		}
 	else if(type != NULL && !strcmp(type,FLOPS) && avg2 != 0)
-		{cout << "FLOPS:"<< avg1/avg2 << endl;}
+		{
+			double ct = (double) avg1/(double)avg2;
+			cout << "FLOPS:"<< ct << endl;}
 	#endif
 }
 

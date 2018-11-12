@@ -22,6 +22,9 @@ int main(int argc, char const *argv[])
         fprintf(stderr, "Usage: ./bin/kmeans PAR|SEQ #REPETITIONS #CLUSTERS #SIZE DATASET_PATH PAPI_OPT(optional)\n");
         return -1;
     }
+    #ifdef PAPI
+    cout << "PAPI"<<endl;
+    #endif
     
     mode = argv[1];
     repetitions = atoi(argv[2]);
@@ -31,6 +34,7 @@ int main(int argc, char const *argv[])
     papiOpt = argv[6];
     xcomp = (double *) malloc(sizeof(double)* size);
     ycomp = (double *) malloc(sizeof(double)* size);
+    utils_setup(repetitions, );
     int utils_error = utils_read_dataset(filename,xcomp,ycomp);
 
     if(utils_error == -1)
@@ -54,9 +58,9 @@ int main(int argc, char const *argv[])
         utils_setup_papi(repetitions, papiOpt);
         for(int i = 0; i < repetitions; i++ )
         {
-            utils_clear_cache();
             utils_start_papi();
             utils_start_timer();
+            utils_clear_cache();
             sets = kmc_seq(clusters, size, xcomp, ycomp);
             utils_stop_timer();
             utils_stop_papi(i);
