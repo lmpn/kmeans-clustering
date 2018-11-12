@@ -5,7 +5,7 @@ CXXFLAGS= -Xpreprocessor -fopenmp -O3 -std=c++11 -g -ggdb3 -Wno-unused-parameter
 
 ifneq ($(MACOS), yes)
 	LIBS = -I/share/apps/papi/5.5.0/include -L/share/apps/papi/5.5.0/lib
-	CXXFLAGS+= -lpapi
+	CXXFLAGS+= -lpapi -DPAPI
 endif
 
  
@@ -43,5 +43,7 @@ checkdirs:
 
 all: checkdirs $(BIN_DIR)/$(BIN_NAME)
 
+delete:
+	rm -rf $(BUILD_DIR) $(BIN_DIR) $(ASM_DIR) $(OBJ_DIR)
 clean:
 	rm -rf $(BUILD_DIR)/* $(BIN_DIR)/* $(ASM_DIR)/* $(OBJ_DIR)/* out outp
