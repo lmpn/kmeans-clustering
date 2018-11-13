@@ -20,14 +20,14 @@
 
 void utils_start_section_timer (void);
 long long unsigned utils_stop_section_timer (void);
-void utils_save_results(char const * , double *, double *, int * , int);
 void utils_stop_timer (void);
+void utils_start_timer (void); 
 void utils_clean_memory(void * xc, void * yc);
 void utils_stop_papi(int rep);
 void utils_start_papi(void);
-void utils_results(char const*);
 void utils_setup_papi(int repetitions, char const * type);
-int utils_read_dataset(char const * filename, double* xcomp, double* ycomp);
+void utils_results(char const*);
+void utils_save_results(char const * , double *, double *, int * , int);
 void utils_clear_cache (void); 
-void utils_start_timer (void); 
+int utils_read_dataset(char const * filename, double* xcomp, double* ycomp);
 #endif 

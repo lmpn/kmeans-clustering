@@ -16,8 +16,8 @@
 
 #para onde mandar mails
 #PBS -M a77763@alunos.uminho.pt
-module load papi/5.5.0 && module load gcc/4.8.2
-cd /home/a77763/PCP/OpenMP
+#module load papi/5.5.0 && module load gcc/4.8.2
+#cd /home/a77763/PCP/OpenMP
 
 
 
