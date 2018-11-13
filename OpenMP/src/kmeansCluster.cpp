@@ -1,5 +1,6 @@
 #include <kmeansCluster.h>
 using namespace std;
+#pragma GCC optimize("tree-vectorize")
 int * kmc_seq(int clusters, int size, double *xcomp, double *ycomp)
 {
     //Random
@@ -99,4 +100,5 @@ int * kmc_seq(int clusters, int size, double *xcomp, double *ycomp)
     
     return sets;
 }
+#pragma GCC reset_options
 void kmc_par(){}
