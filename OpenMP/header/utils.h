@@ -15,6 +15,11 @@
 #define SEQ "seq"
 #define TIME_RESOLUTION 1000000 // us
 #define MAX_THREADS 48 // maximum number of threads to run
+
+
+
+void utils_start_section_timer (void);
+long long unsigned utils_stop_section_timer (void);
 void utils_save_results(char const * , double *, double *, int * , int);
 void utils_stop_timer (void);
 void utils_clean_memory(void * xc, void * yc);
