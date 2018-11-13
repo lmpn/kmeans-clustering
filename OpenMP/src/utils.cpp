@@ -115,7 +115,7 @@ void utils_results(char const * type)
 		}
 	else if(type != NULL && !strcmp(type,FLOPS) && avg2 != 0)
 		{
-			double ct = (double) avg1/(double)avg2;
+			double ct = (double) avg1/(double)avg3/(double)1000;
 			cout << "FLOPS:"<< ct << endl;
 		}
 	#endif

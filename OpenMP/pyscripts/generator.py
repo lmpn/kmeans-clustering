@@ -6,14 +6,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.datasets.samples_generator import make_blobs
 
-array=[4096,8096, 16192,32384]
+array=[1048576,2097152,4194304]
 plt.rcParams['figure.figsize'] = (16, 9)
 plt.style.use('ggplot')
 fig, ax = plt.subplots()
 
 
 
-d = 10
+d = 1500000
 centers = np.array([np.array([1, 1]), np.array([-1, -1]), np.array([1, -1]), np.array([-1,1]) ])
 for x in array:
 	with open("input"+str(x)+".data","xb") as file:

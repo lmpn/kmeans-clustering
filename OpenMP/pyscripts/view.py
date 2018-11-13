@@ -2,7 +2,7 @@
 from copy import deepcopy
 import numpy as np
 import pandas as pd
-k = int(input("k:"))+1
+k = int(input("k:"))
 from matplotlib import pyplot as plt
 plt.rcParams['figure.figsize'] = (7, 7)
 plt.style.use('ggplot')
@@ -18,9 +18,5 @@ for i in range(k):
         points = np.array([[f1[j], f2[j]] for j in range(len(f1)) if f3[j] == i ])
         print(points)
         if len(points)> 0:
-            if i == k-1:
-                s = 15
-                ax.scatter(points[:, 0], points[:, 1], s=30, c=colors[i])
-            else:
-                ax.scatter(points[:, 0], points[:, 1], s=7, c=colors[i])
+            ax.scatter(points[:, 0], points[:, 1], s=7, c=colors[i%8])
 plt.show()
