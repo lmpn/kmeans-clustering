@@ -3,7 +3,7 @@ using namespace std;
 
 
 struct timeval t;
-long long unsigned initial_time;
+long long unsigned initial_time, partial_time;
 double clearcache [30000000];
 vector<long long unsigned> *time_measurement = new vector<long long unsigned>(); 
 int numEvents;
@@ -16,6 +16,18 @@ void utils_start_timer (void)
 {
 	gettimeofday(&t, NULL);
 	initial_time = t.tv_sec * TIME_RESOLUTION + t.tv_usec;
+}
+void utils_start_section_timer (void) 
+{
+	gettimeofday(&t, NULL);
+	partial_time = t.tv_sec * TIME_RESOLUTION + t.tv_usec;
+}
+
+long long unsigned utils_stop_section_timer (void) 
+{
+	gettimeofday(&t, NULL);
+	long long unsigned final_time = t.tv_sec * TIME_RESOLUTION + t.tv_usec;
+	return (final_time - partial_time);
 }
 
 

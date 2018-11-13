@@ -62,8 +62,8 @@ int main(int argc, char const *argv[])
         }
     }
 
-    utils_results(papiOpt);
-    utils_save_results("bin/kmc_out.csv", xcomp, ycomp, sets, size);
+    //utils_results(papiOpt);
+    //utils_save_results("bin/kmc_out.csv", xcomp, ycomp, sets, size);
     utils_clean_memory(xcomp, ycomp); 
     return 0;
 }
