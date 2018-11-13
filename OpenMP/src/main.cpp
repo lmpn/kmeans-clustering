@@ -22,9 +22,6 @@ int main(int argc, char const *argv[])
         fprintf(stderr, "Usage: ./bin/kmeans PAR|SEQ #REPETITIONS #CLUSTERS #SIZE DATASET_PATH PAPI_OPT(optional)\n");
         return -1;
     }
-    #ifdef PAPI
-    cout << "PAPI"<<endl;
-    #endif
     
     mode = argv[1];
     repetitions = atoi(argv[2]);

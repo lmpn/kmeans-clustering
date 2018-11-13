@@ -79,6 +79,7 @@ int * kmc_seq(int clusters, int size, double *xcomp, double *ycomp)
             int point_set_idx = sets[i]*2;
             centroid[point_set_idx] += xcomp[i];
             centroid[point_set_idx+1] += ycomp[i];
+            
         }
         for(int k = 0; k < clusters; k++)
         {
