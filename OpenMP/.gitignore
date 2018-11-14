@@ -3,6 +3,8 @@ obj/*
 asm/*
 bin/*
 build/*
+datasets
+datasets/*
 
 #Excluding extra files
 .DS_Store

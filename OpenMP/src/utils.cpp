@@ -8,7 +8,9 @@ double clearcache [30000000];
 vector<long long unsigned> *time_measurement = new vector<long long unsigned>(); 
 int numEvents;
 long long ** values;
+#ifdef PAPI
 int eventSet = PAPI_NULL;
+#endif
 int *events;
 
 

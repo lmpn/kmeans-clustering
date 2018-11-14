@@ -3,12 +3,12 @@ CXX= g++
 LD  =g++
 CXXFLAGS= -Xpreprocessor -fopenmp -O3 -std=c++11 -g -ggdb3 -Wno-unused-parameter
 
-ifneq ($(MACOS), yes)
+ifeq ($(MACOS), no)
 	LIBS = -I/share/apps/papi/5.5.0/include -L/share/apps/papi/5.5.0/lib
 	CXXFLAGS+= -lpapi -DPAPI
 endif
 
-BIN_NAME = kmeans
+BIN_NAME = kmeans_spi
 SRC_DIR = src
 BIN_DIR = bin
 OBJ_DIR = obj

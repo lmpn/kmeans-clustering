@@ -7,7 +7,9 @@
 #include <sys/time.h>
 #include <vector>
 #include <string.h>
-#include <papi.h>
+#ifdef PAPI
+    #include <papi.h>
+#endif
 #define FLOPS "flops"
 #define L2MR "l2mr"
 #define L3MR "l3mr"
