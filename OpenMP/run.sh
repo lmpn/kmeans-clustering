@@ -6,7 +6,7 @@
 #Tempo maximo do processo
 #PBS -l walltime=02:00:00
 
-#PBS -l nodes=4:r662
+#PBS -l nodes=4:r641
 
 #Fila de espera para ir
 #PBS -q mei
@@ -35,16 +35,18 @@ echo Papi final
 ./bin/kmeans_spf seq 20 5 4194304 datasets/input4194304.data l2mr
 ./bin/kmeans_spf seq 20 5 4194304 datasets/input4194304.data l3mr
 
-echo Percentagem de tempo por etapa
-./bin/kmeans_sfs seq 20 5 4194304 datasets/input4194304.data nopapi
+#echo Percentagem de tempo por etapa
+#./bin/kmeans_sfs seq 20 5 4194304 datasets/input4194304.data nopapi
 
-array=(1048576 2097152 4194304)
-echo Tempo versão final com varios datasets e particoes
-for p in 4 5 6 7 8 9 10
-do
-	for item in ${array[*]}
-    do
-        echo Tempo versão final com $item dataset e $p particoes 
-       ./bin/kmeans_sf seq 20 $p $item datasets/input$item.data nopapi
-    done
-done
+#array=(1048576 2097152 4194304)
+#echo Tempo versão final com varios datasets e particoes
+#for p in 4 5 6 7 8 9 10
+#do
+#	for item in ${array[*]}
+#    do
+#
+#        echo Tempo versão final com $item dataset e $p particoes 
+
+#       ./bin/kmeans_sf seq 20 $p $item datasets/input$item.data nopapi
+#    done
+#done
