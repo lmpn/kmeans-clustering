@@ -1,7 +1,7 @@
 #!/./bin/sh
 
 #Dar nome ao processo
-#PBS -N openmp1 
+#PBS -N openmp3 
 
 #Tempo maximo do processo
 #PBS -l walltime=02:00:00
@@ -19,10 +19,11 @@
 module load papi/5.5.0 && module load gcc/4.8.2
 cd /home/a77763/PCP/OpenMP
 
-echo Tempo versão sequencial inicial
-./bin/kmeans_si seq 5 5 4194304 datasets/input4194304.data nopapi
 
-echo Papi inicial
-./bin/kmeans_spi seq 5 5 4194304 datasets/input4194304.data l1mr
-./bin/kmeans_spi seq 5 5 4194304 datasets/input4194304.data l2mr
-./bin/kmeans_spi seq 5 5 4194304 datasets/input4194304.data l3mr
+array=(1048576 2097152 4194304)
+echo Tempo versão final com varios datasets e particoes
+for item in ${array[*]}
+do
+        echo Tempo versão final com $item dataset e 7 particoes 
+       ./bin/kmeans_sf seq 5 7 $item datasets/input$item.data nopapi
+done

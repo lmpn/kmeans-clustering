@@ -67,7 +67,7 @@ int utils_read_dataset(char const * filename, double* xcomp, double* ycomp)
 void utils_setup_papi(int repetitions, char const * type)
 {
 	#ifdef PAPI
-	if (!strcmp(type,FLOPS))
+	if (!strcmp(type,L1MR))
 	{
 		numEvents = 2;
 		events = (int*) malloc(numEvents * sizeof(int));
@@ -106,33 +106,13 @@ void utils_results(char const * type)
 	for(size_t i = 0; i < repetitions; i++)
 	{
 		#ifdef PAPI
-		avg1 += (*values)[0];
-		avg2 += (*values)[1];
+		cout << type << endl;
+		cout << values[0][i] << endl;
+		cout << values[1][i] << endl;
 		#endif
-		avg3 += time_measurement->at(i);
+		double tm = time_measurement->at(i) / (double ) 1000;
+		cout << "Execution Time #"<< i << ": "<< tm  << "ms"<<  endl;
 	}
-
-	if(repetitions != 0)
-	{
-		cout << "Execution Time:"<<  avg3 / (double) 1000 / (double) repetitions << "ms"<< endl;
-	}
-	#ifdef PAPI
-	if(type != NULL && !strcmp(type,L3MR) && avg2 != 0)
-		{
-			double ct = (double) avg1/(double)avg2;
-			cout << "Level 3 Miss Rate:"<< ct << endl;
-		}
-	else if(type != NULL && !strcmp(type,L2MR) && avg2 != 0)
-		{
-			double ct = (double) avg1/(double)avg2;
-			cout << "Level 2 Miss Rate:"<< ct << endl;
-		}
-	else if(type != NULL && !strcmp(type,FLOPS) && avg2 != 0)
-		{
-			double ct = (double) avg1/(double)avg3/(double)1000;
-			cout << "FLOPS:"<< ct << endl;
-		}
-	#endif
 }
 
 
