@@ -2,7 +2,29 @@ SHELL = /bin/sh
 CXX= g++
 LD  =g++
 CXXFLAGS= -Xpreprocessor -fopenmp -O3 -std=c++11 -g -ggdb3 -Wno-unused-parameter
+ifeq($(VERSION), seq)
+	BIN_NAME = kmeans_si
+endif
 
+ifeq($(VERSION), seqp)
+	LIBS = -I/share/apps/papi/5.5.0/include -L/share/apps/papi/5.5.0/lib
+	CXXFLAGS+= -lpapi -DPAPI
+	BIN_NAME = kmeans_spi
+endif
+
+ifeq($(VERSION), seqfp)
+	LIBS = -I/share/apps/papi/5.5.0/include -L/share/apps/papi/5.5.0/lib
+	CXXFLAGS+= -lpapi -DPAPI
+	BIN_NAME = kmeans_spf
+endif
+
+ifeq($(VERSION), seqfs)
+	BIN_NAME = kmeans_sfs
+endif
+
+ifeq($(VERSION), seqf)
+	BIN_NAME = kmeans_sf
+endif
 ifeq ($(MACOS), no)
 	LIBS = -I/share/apps/papi/5.5.0/include -L/share/apps/papi/5.5.0/lib
 	CXXFLAGS+= -lpapi -DPAPI
