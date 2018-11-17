@@ -64,30 +64,15 @@ int utils_read_dataset(char const * filename, double* xcomp, double* ycomp)
 
 
 
-void utils_setup_papi(int repetitions, char const * type)
+void utils_setup_papi(int repetitions)
 {
 	#ifdef PAPI
-	if (!strcmp(type,L1MR))
-	{
-		numEvents = 2;
-		events = (int*) malloc(numEvents * sizeof(int));
-    	events[0] = PAPI_FP_OPS; 
- 		events[1] = PAPI_TOT_CYC;
-	}
-	else if (!strcmp(type, L2MR))
-	{
-		numEvents = 2;
-		events = (int*) malloc(numEvents * sizeof(int ));
- 		events[0] = PAPI_L2_TCM; 
-    	events[1] = PAPI_L1_DCM;
-  	}
-  	else if (!strcmp(type, L3MR))
-  	{
-  	  	numEvents = 2;
-		events = (int*) malloc(numEvents * sizeof( int));
- 		events[0] = PAPI_L3_TCM; 
-    	events[1] = PAPI_L2_DCM;
-  	}
+	numEvents = 4;
+	events = (int*) malloc(numEvents * sizeof(int));
+	events[0] = PAPI_L1_TCM; 
+	events[1] = PAPI_L2_TCM;
+	events[2] = PAPI_L3_TCM;
+	events[3] = PAPI_TOT_INS;
 	values = (long long **) malloc(sizeof(long long) * repetitions);	
 	for( int i = 0; i < repetitions; i++)
 	{
@@ -95,20 +80,21 @@ void utils_setup_papi(int repetitions, char const * type)
 	}
 	PAPI_library_init(PAPI_VER_CURRENT);
     PAPI_create_eventset(&eventSet);
- 	PAPI_add_events(eventSet, events, 2); /* Start the counters */
+ 	PAPI_add_events(eventSet, events, numEvents); /* Start the counters */
 	#endif
 }
 
-void utils_results(char const * type)
+void utils_results()
 {
 	int repetitions = time_measurement->size();
 	long long avg1 = 0, avg2 = 0, avg3 = 0;
 	for(size_t i = 0; i < repetitions; i++)
 	{
 		#ifdef PAPI
-		cout << type << endl;
-		cout << values[0][i] << endl;
-		cout << values[1][i] << endl;
+		cout << values[i][0] << endl;
+		cout << values[i][1] << endl;
+		cout << values[i][2] << endl;
+		cout << values[i][3] << endl;
 		#endif
 		double tm = time_measurement->at(i) / (double ) 1000;
 		cout << "Execution Time #"<< i << ": "<< tm  << "ms"<<  endl;

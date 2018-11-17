@@ -5,12 +5,9 @@
 
 #Tempo maximo do processo
 #PBS -l walltime=02:00:00
-
-#PBS -l nodes=24:r662
-
 #Fila de espera para ir
 #PBS -q mei
-
+#PBS -l nodes=4:r662:ppn=2
 #mandar mail no principio(b) no final(e) e em caso de aborto(a)
 #PBS -m bea
 
@@ -20,10 +17,9 @@ module load papi/5.5.0 && module load gcc/4.8.2
 cd /home/a77763/PCP/OpenMP
 
 
-array=(1048576 2097152 4194304)
-echo Tempo versão final com varios datasets e particoes
-for item in ${array[*]}
-do
-        echo Tempo versão final com $item dataset e 7 particoes 
-       ./bin/kmeans_sf seq 5 7 $item datasets/input$item.data nopapi
-done
+echo Percentagem de tempo por etap
+./bin/kmeans_sfs seq 5 10 1048576 datasets/input1048576.data
+echo Percentagem de tempo por etapa
+./bin/kmeans_sfs seq 5 10 2097152 datasets/input2097152.data
+echo Percentagem de tempo por etapa
+./bin/kmeans_sfs seq 5 10 4194304 datasets/input4194304.data

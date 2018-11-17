@@ -1,0 +1,19 @@
+Tempo versão final com varios datasets e particoes
+Tempo versão final com 1048576 dataset e 7 particoes
+Execution Time #0: 13860.1ms
+Execution Time #1: 13369.8ms
+Execution Time #2: 13773.9ms
+Execution Time #3: 13341.7ms
+Execution Time #4: 13651.3ms
+Tempo versão final com 2097152 dataset e 7 particoes
+Execution Time #0: 16494.4ms
+Execution Time #1: 16571.8ms
+Execution Time #2: 16460.3ms
+Execution Time #3: 16861.2ms
+Execution Time #4: 16933.3ms
+Tempo versão final com 4194304 dataset e 7 particoes
+Execution Time #0: 53865.3ms
+Execution Time #1: 53668.6ms
+Execution Time #2: 50210.4ms
+Execution Time #3: 46938.1ms
+Execution Time #4: 48370.2ms

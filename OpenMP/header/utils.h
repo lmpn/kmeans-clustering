@@ -10,9 +10,6 @@
 #ifdef PAPI
     #include <papi.h>
 #endif
-#define L1MR "l1mr"
-#define L2MR "l2mr"
-#define L3MR "l3mr"
 #define PAR "par"
 #define SEQ "seq"
 #define TIME_RESOLUTION 1000000 // us
@@ -27,8 +24,8 @@ void utils_start_timer (void);
 void utils_clean_memory(void * xc, void * yc);
 void utils_stop_papi(int rep);
 void utils_start_papi(void);
-void utils_setup_papi(int repetitions, char const * type);
-void utils_results(char const*);
+void utils_setup_papi(int repetitions);
+void utils_results();
 void utils_save_results(char const * , double *, double *, int * , int);
 void utils_clear_cache (void); 
 int utils_read_dataset(char const * filename, double* xcomp, double* ycomp);

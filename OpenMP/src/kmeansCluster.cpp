@@ -3,11 +3,10 @@ using namespace std;
 
 int * kmc_seq_final(int clusters, int size, double *xcomp, double *ycomp)
 {
-    //Random
     
     //double timer, timer1, timer2, timer3, timer4, timer5, timer6, timer7 ;
     //timer1=timer2=timer3=timer4=timer5=timer6=timer7= 0.0;
-    utils_start_section_timer();
+    //utils_start_section_timer();
     std::mt19937 rng;
     uint32_t seed_val;
     rng.seed(seed_val);
@@ -24,8 +23,7 @@ int * kmc_seq_final(int clusters, int size, double *xcomp, double *ycomp)
 
 
 
-   //utils_start_section_timer();
-    //double reduction + sets = 0
+    //utils_start_section_timer();
     for(size_t i = 0; i < size; i++)
     {
         if(max < xcomp[i])
@@ -34,7 +32,6 @@ int * kmc_seq_final(int clusters, int size, double *xcomp, double *ycomp)
             max = ycomp[i];  
     }
     //timer2 = utils_stop_section_timer()/(double) 1000;
-    //sets_counter = 0
     uniform_real_distribution<double> urd_g(0,max); 
     //utils_start_section_timer();
     for(int i = 0 ; i < clusters; i++){
@@ -50,7 +47,6 @@ int * kmc_seq_final(int clusters, int size, double *xcomp, double *ycomp)
     {
         c_error = error;
         error = 0.0;
-        //"ASSIGNMENT STEP"
         //utils_start_section_timer();
         for (int point_idx = 0; point_idx < size ;  point_idx++)
         {
@@ -97,13 +93,13 @@ int * kmc_seq_final(int clusters, int size, double *xcomp, double *ycomp)
             
         }
         //timer6 += utils_stop_section_timer()/(double) 1000;
-        //utils_start_section_timer(); 
+        utils_start_section_timer(); 
         for(int k = 0; k < clusters; k++)
         {
             sets_counter[k] = 0;
             error = error + centroid_x[k] + centroid_y[k];
         }
-      //  timer7 += utils_stop_section_timer()/(double) 1000;
+        //timer7 += utils_stop_section_timer()/(double) 1000;
     }while(error != c_error);
     //cout << timer1 << ","<< timer2 << "," << timer3 << "," << timer4 << "," << timer5 << "," << timer6 << "," << timer7 << endl; 
     return sets;
@@ -112,7 +108,6 @@ int * kmc_seq_final(int clusters, int size, double *xcomp, double *ycomp)
 
 int * kmc_seq_initial(int clusters, int size, double *xcomp, double *ycomp)
 {
-    //Random
     std::mt19937 rng;
     uint32_t seed_val;
     rng.seed(seed_val);
@@ -131,7 +126,6 @@ int * kmc_seq_initial(int clusters, int size, double *xcomp, double *ycomp)
     double* centroid                  = (double*) malloc(sizeof(double)*clusters*2); 
     double* centroid_old              = (double*) malloc(sizeof(double)*clusters*2);
     double  centroid_point_distance   = 0.0;
-    //double reduction + sets = 0
     for(size_t i = 0; i < size; i++)
     {
         if(max < xcomp[i])
@@ -139,12 +133,10 @@ int * kmc_seq_initial(int clusters, int size, double *xcomp, double *ycomp)
         if(max < ycomp[i])
             max = ycomp[i];  
     }
-    //sets_counter = 0
     uniform_real_distribution<double> urd_g(0,max); 
     for(int i = 0 ; i < clusters; i++){
         centroid[i*2] = urd_g(rng);
         centroid[1+i*2] = urd_g(rng);
-        //sets_counter[i] = 0;
     }
 
     while( error != norm)
@@ -152,7 +144,6 @@ int * kmc_seq_initial(int clusters, int size, double *xcomp, double *ycomp)
         error = norm;
 	norm = 0.0;
 
-        //"ASSIGNMENT STEP"
         for (int point_idx = 0; point_idx < size ;  point_idx++)
         {
             for (int cluster_idx = 0; cluster_idx < clusters; cluster_idx++)
@@ -176,7 +167,6 @@ int * kmc_seq_initial(int clusters, int size, double *xcomp, double *ycomp)
 
 
 
-        //DEEP COPY 
         for(int k_idx = 0; k_idx < clusters*2 ; k_idx++)
         {
             centroid_old[k_idx] = centroid[k_idx];
@@ -184,7 +174,6 @@ int * kmc_seq_initial(int clusters, int size, double *xcomp, double *ycomp)
         }
 
 
-        //"UPDATE STEP"
         for(int i = 0; i < size; i++)
         {
             int point_set_idx = sets[i]*2;

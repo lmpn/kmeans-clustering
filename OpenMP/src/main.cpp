@@ -1,6 +1,7 @@
 #include <utils.h>
 #include <kmeansCluster.h>
 
+
 using namespace std;
 
 
@@ -19,7 +20,7 @@ int main(int argc, char const *argv[])
     double* ycomp = NULL;
     int* sets = NULL; 
     if(argc < 6){
-        fprintf(stderr, "Usage: ./bin/kmeans PAR|SEQ #REPETITIONS #CLUSTERS #SIZE DATASET_PATH PAPI_OPT(optional)\n");
+        fprintf(stderr, "Usage: ./bin/kmeans PAR|SEQ #REPETITIONS #CLUSTERS #SIZE DATASET_PATH \n");
         return -1;
     }
     
@@ -28,7 +29,6 @@ int main(int argc, char const *argv[])
     clusters = atoi(argv[3]); 
     size = atoi(argv[4]);
     filename = argv[5];
-    papiOpt = argv[6];
     xcomp = (double *) malloc(sizeof(double)* size);
     ycomp = (double *) malloc(sizeof(double)* size);
     int utils_error = utils_read_dataset(filename,xcomp,ycomp);
@@ -38,7 +38,7 @@ int main(int argc, char const *argv[])
         return -1;
     }
     
-    if( !strcmp(mode, PAR) && argc == 6)
+    if( !strcmp(mode, PAR))
     {
         for(int i = 0; i < repetitions; i++ )
         {
@@ -48,9 +48,9 @@ int main(int argc, char const *argv[])
             utils_stop_timer();
         }
     }
-    else if( !strcmp(mode, SEQ) && argc == 7)
+    else if( !strcmp(mode, SEQ))
     {
-        utils_setup_papi(repetitions, papiOpt);
+        utils_setup_papi(repetitions);
         for(int i = 0; i < repetitions; i++ )
         {
             utils_clear_cache();
@@ -62,7 +62,7 @@ int main(int argc, char const *argv[])
         }
     }
 
-    utils_results(papiOpt);
+    utils_results();
     utils_clean_memory(xcomp, ycomp); 
     return 0;
 }
