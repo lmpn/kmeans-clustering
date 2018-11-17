@@ -2,6 +2,7 @@ SHELL = /bin/sh
 CXX= g++
 LD  =g++
 CXXFLAGS= -Xpreprocessor -fopenmp -O3 -std=c++11 -g -ggdb3 -Wno-unused-parameter
+
 ifeq ($(VERSION), inicial)
 	BIN_NAME = kmeans_si
 else ifeq ($(VERSION), papi_inicial)
