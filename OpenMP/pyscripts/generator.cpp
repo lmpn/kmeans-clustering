@@ -14,22 +14,16 @@ using namespace std;
 
 int main(void)
 {
-<<<<<<< HEAD
-    int array[3] = {1048576,2097152,4194304};
-=======
-    int array[4] = {1048576,2097152,4194304, 33554432};
->>>>>>> 3e035836501dcf345e3b56d2b15115dd5921d5ee
+
+    int array[4] = {2048,16384,1966080,62914560};
+
 
     std::mt19937 rng;
     uint32_t seed_val;
     rng.seed(seed_val);
-<<<<<<< HEAD
-    long long max = 1000000;
-    for(int i = 0; i < 3; i++)
-=======
-    long long max = 30000000;
-    for(int i = 3; i < 4; i++)
->>>>>>> 3e035836501dcf345e3b56d2b15115dd5921d5ee
+
+    long long max = 10000;
+    for(int i = 0; i < 4; i++)
     {
         uniform_real_distribution<double> urd_g(0,max); 
         std::ofstream fout("input"+to_string(array[i])+".data");
@@ -42,7 +36,7 @@ int main(void)
             fout <<x << " " << y<< endl; 
         }
         cout << "done"<<endl;
-        max *= 2;
+        max *= 10;
     }
     
 

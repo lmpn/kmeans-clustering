@@ -12,5 +12,5 @@
 #define ZERO 1e-12
 int * kmc_seq_final(int clusters, int size, double *xcomp, double *ycomp);
 int * kmc_seq_initial(int clusters, int size, double *xcomp, double *ycomp);
-void kmc_par();
+int * kmc_par(int clusters, int size, double *xcomp, double *ycomp);
 #endif
