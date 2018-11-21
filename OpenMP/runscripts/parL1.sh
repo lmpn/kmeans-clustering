@@ -18,8 +18,8 @@
 #PBS -M a77211@alunos.uminho.pt
 module load papi/5.5.0 && module load gcc/7.2.0
 cd /home/a77211/trabalho/OpenMP
-for t in 2 4 8 12 24 48
+for t in 2 4 8 16 24
 do
 	export OMP_THREAD_NUM=$t
-	./bin/kmeans_par par 5 10 2048 datasets/input2048.data
+	./helloflops3o_xeon
 done
