@@ -1,9 +1,14 @@
 SHELL = /bin/sh
 CXX = mpicxx
 LD  = mpicxx
+CXXFLAGS = -O3 -ffast-math -Wall -Wextra -pedantic -Wno-unused-parameter -std=c11 -march=native
 
-
-
+ifeq ($(ALLRED), yes)
+	CXXFLAGS += -DALLRED
+endif
+ifeq ($(REDUCEBCAST), yes)
+	CXXFLAGS += -DREDUCEBCAST
+endif
 BIN_NAME = kmeans_mpi
 SRC_DIR = src
 BIN_DIR = bin

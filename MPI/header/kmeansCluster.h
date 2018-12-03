@@ -13,4 +13,5 @@
 int * kmc_seq_final(int clusters, int size, double *xcomp, double *ycomp);
 int * kmc_seq_initial(int clusters, int size, double *xcomp, double *ycomp);
 int * kmc_par(int clusters, int size, double *xcomp, double *ycomp);
+int *kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int argc, char **argv);
 #endif

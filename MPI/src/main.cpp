@@ -1,4 +1,5 @@
 #include <utils.h>
+#include <mpi.h>
 #include <kmeansCluster.h>
 
 
@@ -8,7 +9,7 @@ using namespace std;
 // kmeans PAR/SEQ REPS SIZE DATASET PAPI_OPT
 
 
-int main(int argc, char const *argv[])
+int main(int argc, char *argv[])
 {
     int repetitions;
     int size;
@@ -40,11 +41,13 @@ int main(int argc, char const *argv[])
     
     if( !strcmp(mode, PAR))
     {
+       
+        // rank 0 
         for(int i = 0; i < repetitions; i++ )
         {
             utils_clear_cache();
             utils_start_timer();
-
+            sets = kmc_mpi(clusters,size,xcomp,ycomp, argc, argv);
             //sets=kmc_par(clusters,size,xcomp,ycomp);
             utils_stop_timer();
         }
