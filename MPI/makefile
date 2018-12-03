@@ -1,7 +1,7 @@
 SHELL = /bin/sh
 CXX = mpicxx
 LD  = mpicxx
-CXXFLAGS = -O3 -ffast-math -Wall -Wextra -pedantic -Wno-unused-parameter -std=c11 -march=native
+CXXFLAGS = -O3 -std=c++11 -g -ggdb3 -Wno-unused-parameter
 
 ifeq ($(ALLRED), yes)
 	CXXFLAGS += -DALLRED
