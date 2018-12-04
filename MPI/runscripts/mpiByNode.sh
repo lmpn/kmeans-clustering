@@ -24,6 +24,6 @@ for datasets in input1966080.data input62914560.data
 	do
 	for processos in 2 4 6 8 10 12 16 20 24 30 32
 		do
-		mpirun -bycore -np $processos --mca btl self,sm,tcp bin/kmeans_mpi par 8 10 $datasets
+		mpirun -bynode -np $processos --mca btl self,sm,tcp bin/kmeans_mpi par 8 10 $datasets
 	done
 done
