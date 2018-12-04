@@ -1,5 +1,4 @@
-#!/./bin/sh
-
+#!/./bin/sh 
 #Dar nome ao processo
 #PBS -N Inicial
 
@@ -18,3 +17,4 @@
 module load gcc/5.3.0
 module load gnu/openmpi_eth/1.8.4
 cd /home/a77211/trabalho/PCP/MPI
+mpirun -np "processos" --oversubscribe --mca btl self,sm,tcp bin/kmeans_mpi par 8 10 "datasets"
