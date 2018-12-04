@@ -174,41 +174,30 @@ int *kmc_seq_initial(int clusters, int size, double *xcomp, double *ycomp)
     return sets;
 }
 
-int *kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int argc, char **argv)
+void kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int myrank, int nprocesses, int **result)
 {
-    /*Init Mpi*/
-    int nprocesses;
-    int myrank;
-    MPI_Init(&argc, &argv);
-    MPI_Comm_size(MPI_COMM_WORLD, &nprocesses);
-    MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
 
     /*
     * Declaring global variables
     */
-    std::mt19937 rng;
-    uint32_t seed_val;
-    rng.seed(seed_val);
-    int *sets_global = (int *)calloc(size, sizeof(int));
-    double max = -DBL_MAX;
     double centroid_x_global[clusters];
     double centroid_y_global[clusters];
+    int *sets_global = (int *)calloc(size, sizeof(int));
     double *sets_counter_global = (double *)calloc(clusters, sizeof(double));
+    int chunk_size = size / nprocesses;
     double error = DBL_MAX;
     double c_error = DBL_MAX;
-    int chunk_size = size / nprocesses;
-
-
-    /*
-     * Declaring local variables
-    */
-
-    int *sets_local = (int *)calloc(chunk_size, sizeof(int));
-    double *xcomp_local = (double *)_mm_malloc(chunk_size * sizeof(double), 64);
-    double *ycomp_local = (double *)_mm_malloc(chunk_size * sizeof(double), 64);
-
+    double times[9];
     if (myrank == 0)
     {
+
+        times[0] = MPI_Wtime();
+        std::mt19937 rng;
+        uint32_t seed_val;
+        rng.seed(seed_val);
+
+        double max = -DBL_MAX;
+
         for (size_t i = 0; i < size; i++)
         {
             if (max < xcomp[i])
@@ -224,7 +213,16 @@ int *kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int argc, cha
             centroid_x_global[i] = urd_g(rng);
             centroid_y_global[i] = urd_g(rng);
         }
+        times[1] = MPI_Wtime();
     }
+
+    /*
+     * Declaring local variables
+    */
+
+    int *sets_local = (int *)calloc(chunk_size, sizeof(int));
+    double *xcomp_local = (double *)_mm_malloc(chunk_size * sizeof(double), 64);
+    double *ycomp_local = (double *)_mm_malloc(chunk_size * sizeof(double), 64);
 
     MPI_Scatter(xcomp, chunk_size, MPI_DOUBLE, xcomp_local, chunk_size, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     MPI_Scatter(ycomp, chunk_size, MPI_DOUBLE, ycomp_local, chunk_size, MPI_DOUBLE, 0, MPI_COMM_WORLD);
@@ -232,9 +230,14 @@ int *kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int argc, cha
     MPI_Bcast(centroid_y_global, clusters, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     do
     {
-        c_error = error;
-        error = 0.0;
+        if (myrank == 0)
+        {
+            times[2] += MPI_Wtime();
+            c_error = error;
+            error = 0.0;
+        }
 
+            
         /**
          * Phase 2 Master + Workers
         */
@@ -261,19 +264,27 @@ int *kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int argc, cha
          * Phase 3
          */
 
-        //Gather sets_local
-        //1) reduce counter_local + bcast
-        //2) reduceAll
+        if (myrank == 0)
+        {
+            times[3] += MPI_Wtime();
+        }
 #ifdef REDUCEBCAST
-        MPI_Reduce(sets_counter_global, sets_counter_global, clusters, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+        if (myrank == 0)
+        {
+            MPI_Reduce(MPI_IN_PLACE, sets_counter_global, clusters, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+        }
+        else
+        {
+            MPI_Reduce(sets_counter_global, sets_counter_global, clusters, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+        }
         MPI_Bcast(sets_counter_global, clusters, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 #endif
 #ifdef ALLRED
-        MPI_Allreduce(sets_counter_global, sets_counter_global, clusters, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(MPI_IN_PLACE, sets_counter_global, clusters, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 #endif
-
         if (myrank == 0)
         {
+            times[4] += MPI_Wtime();
             for (int cluster_idx = 0; cluster_idx < clusters; cluster_idx++)
             {
                 error = error - centroid_y_global[cluster_idx] - centroid_x_global[cluster_idx];
@@ -281,6 +292,7 @@ int *kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int argc, cha
                 centroid_y_global[cluster_idx] = 0.0;
                 sets_counter_global[cluster_idx] = 1 / sets_counter_global[cluster_idx];
             }
+            times[5] += MPI_Wtime();
         }
         else
         {
@@ -298,34 +310,57 @@ int *kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int argc, cha
             centroid_x_global[point_set_idx] += xcomp_local[i] * set_size;
             centroid_y_global[point_set_idx] += ycomp_local[i] * set_size;
         }
+        if (myrank == 0)
+        {
+            times[6] += MPI_Wtime();
+        }
+
 #ifdef REDUCEBCAST
-        MPI_Reduce(centroid_x_global, centroid_x_global, clusters, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+        if (myrank == 0)
+        {
+            MPI_Reduce(MPI_IN_PLACE, centroid_x_global, clusters, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+        }
+        else
+        {
+            MPI_Reduce(centroid_x_global, centroid_x_global, clusters, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+        }
         MPI_Bcast(centroid_x_global, clusters, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-        MPI_Reduce(centroid_y_global, centroid_y_global, clusters, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+        if (myrank == 0)
+        {
+            MPI_Reduce(MPI_IN_PLACE, centroid_y_global, clusters, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+        }
+        else
+        {
+            MPI_Reduce(centroid_y_global, centroid_y_global, clusters, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+        }
         MPI_Bcast(centroid_y_global, clusters, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 #endif
 #ifdef ALLRED
-        MPI_Allreduce(centroid_x_global,centroid_x_global , clusters, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-        MPI_Allreduce(centroid_y_global,centroid_y_global , clusters, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(MPI_IN_PLACE, centroid_x_global, clusters, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(MPI_IN_PLACE, centroid_y_global, clusters, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 #endif
-        if(myrank == 0)
+        if (myrank == 0)
         {
+            times[7] += MPI_Wtime();
             for (int k = 0; k < clusters; k++)
             {
                 sets_counter_global[k] = 0;
-                error = error+sets_counter_global[k]+sets_counter_global[k];
+                error = error + sets_counter_global[k] + sets_counter_global[k];
             }
             int msg;
-            if( error == c_error)
+            if (error == c_error)
             {
                 msg = 1;
-                MPI_Bcast(&msg, 1 , MPI_INT, 0, MPI_COMM_WORLD);
+                MPI_Bcast(&msg, 1, MPI_INT, 0, MPI_COMM_WORLD);
+                MPI_Gather(sets_local, chunk_size, MPI_INT, sets_global, chunk_size, MPI_INT, 0, MPI_COMM_WORLD);
+                times[8] += MPI_Wtime();
                 break;
-            } 
-            else 
+            }
+            else
             {
                 msg = 0;
-                MPI_Bcast(&msg, 1 , MPI_INT, 0, MPI_COMM_WORLD);
+                MPI_Bcast(&msg, 1, MPI_INT, 0, MPI_COMM_WORLD);
+                times[8] += MPI_Wtime();
             }
         }
         else
@@ -335,11 +370,21 @@ int *kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int argc, cha
                 sets_counter_global[k] = 0;
             }
             int msg;
-            MPI_Bcast(&msg, 1 , MPI_INT, 0, MPI_COMM_WORLD);
-            if(msg==1) break;
+            MPI_Bcast(&msg, 1, MPI_INT, 0, MPI_COMM_WORLD);
+            if (msg == 1)
+            {
+                MPI_Gather(sets_local, chunk_size, MPI_INT, sets_global, chunk_size, MPI_INT, 0, MPI_COMM_WORLD);
+                break;
+            }
         }
     } while (true);
-    MPI_Finalize();
 
-    return sets_global;
+    if (myrank == 0)
+    {
+        *result = sets_global;
+        for(int i = 0; i < 9; i++)
+            printf("%lf;",times[i]);
+    }
+
+    return;
 }
