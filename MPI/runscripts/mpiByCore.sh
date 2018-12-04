@@ -1,4 +1,5 @@
-#!/./bin/sh 
+#!/./bin/sh
+
 #Dar nome ao processo
 #PBS -N Inicial
 
@@ -17,6 +18,8 @@
 module load gcc/5.3.0
 module load gnu/openmpi_eth/1.8.4
 cd /home/a77211/trabalho/PCP/MPI
+
+
 for datasets in input1966080.data input62914560.data
 	do
 	for processos in 2 4 6 8 10 12 16 20 24 30 32
