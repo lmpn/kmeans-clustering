@@ -1,29 +1,15 @@
 SHELL = /bin/sh
-CXX= g++
-LD  =g++
-CXXFLAGS= -fopenmp -O3 -std=c++11 -g -ggdb3 -Wno-unused-parameter
+CXX = mpicxx
+LD  = mpicxx
+CXXFLAGS = -O3 -std=c++11 -g -ggdb3 -Wno-unused-parameter
 
-ifeq ($(VERSION), inicial)
-	BIN_NAME = kmeans_si
-else ifeq ($(VERSION), par)
-	BIN_NAME = kmeans_par
-else ifeq ($(VERSION), papi_inicial)
-	LIBS = -I/share/apps/papi/5.5.0/include -L/share/apps/papi/5.5.0/lib
-	CXXFLAGS+= -lpapi -DPAPI
-	BIN_NAME = kmeans_spi
-else ifeq ($(VERSION), papi_final)
-	LIBS = -I/share/apps/papi/5.5.0/include -L/share/apps/papi/5.5.0/lib
-	CXXFLAGS+= -lpapi -DPAPI
-	BIN_NAME = kmeans_spf
-else ifeq ($(VERSION), final_parte)
-	BIN_NAME = kmeans_sfs
-else ifeq ($(VERSION), final)
-	BIN_NAME = kmeans_sf
-else ifeq ($(MACOS), no)
-	LIBS = -I/share/apps/papi/5.5.0/include -L/share/apps/papi/5.5.0/lib
-	CXXFLAGS+= -lpapi -DPAPI
+ifeq ($(ALLRED), yes)
+	CXXFLAGS += -DALLRED
 endif
-
+ifeq ($(REDUCEBCAST), yes)
+	CXXFLAGS += -DREDUCEBCAST
+endif
+BIN_NAME = kmeans_mpi
 SRC_DIR = src
 BIN_DIR = bin
 OBJ_DIR = obj

@@ -5,6 +5,7 @@ using namespace std;
 int * kmc_seq_final(int clusters, int size, double *xcomp, double *ycomp)
 {
     
+    
     std::mt19937 rng;
     uint32_t seed_val;
     rng.seed(seed_val);
@@ -60,6 +61,10 @@ int * kmc_seq_final(int clusters, int size, double *xcomp, double *ycomp)
             sets_counter[current_point_cluster_idx] += 1.0;
             sets[point_idx] = current_point_cluster_idx;
         }
+
+
+
+
         for(int cluster_idx = 0; cluster_idx < clusters ; cluster_idx++)
         {
             error = error - centroid_y[cluster_idx] - centroid_x[cluster_idx];
@@ -179,10 +184,11 @@ int * kmc_seq_initial(int clusters, int size, double *xcomp, double *ycomp)
     return sets;
 }
 
- 
+
+
+
 int * kmc_par(int clusters, int size, double * xcomp, double * ycomp) {
 
-  utils_start_section_timer();
   std::mt19937 rng;
   uint32_t seed_val;
   rng.seed(seed_val);
@@ -231,12 +237,16 @@ int * kmc_par(int clusters, int size, double * xcomp, double * ycomp) {
       sets_counter[current_point_cluster_idx] += 1.0;
       sets[point_idx] = current_point_cluster_idx;
     }
+
+
     for (int cluster_idx = 0; cluster_idx < clusters; cluster_idx++) {
       error = error - centroid_y[cluster_idx] - centroid_x[cluster_idx];
       centroid_x[cluster_idx] = 0.0;
       centroid_y[cluster_idx] = 0.0;
       sets_counter[cluster_idx] = 1 / sets_counter[cluster_idx];
     }
+
+    
     #pragma omp parallel for reduction(+: centroid_x[: clusters]) reduction(+: centroid_y[: clusters])
     for (int i = 0; i < size; i++) {
       int point_set_idx = sets[i];
@@ -246,7 +256,6 @@ int * kmc_par(int clusters, int size, double * xcomp, double * ycomp) {
 
     }
 
-    utils_start_section_timer();
 
     for (int k = 0; k < clusters; k++) {
       sets_counter[k] = 0;
@@ -257,3 +266,5 @@ int * kmc_par(int clusters, int size, double * xcomp, double * ycomp) {
 return sets;
 
 }
+
+

@@ -15,7 +15,7 @@ using namespace std;
 int main(void)
 {
 
-    int array[4] = {2048,16384,1966080,62914560};
+    int array[1] = {786432};
 
 
     std::mt19937 rng;
@@ -23,7 +23,7 @@ int main(void)
     rng.seed(seed_val);
 
     long long max = 10000;
-    for(int i = 0; i < 4; i++)
+    for(int i = 0; i < 1; i++)
     {
         uniform_real_distribution<double> urd_g(0,max); 
         std::ofstream fout("input"+to_string(array[i])+".data");

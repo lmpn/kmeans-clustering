@@ -17,7 +17,7 @@
 #para onde mandar mails
 #PBS -M a77211@alunos.uminho.pt
 module load papi/5.5.0 && module load gcc/7.2.0
-cd /home/a77211/trabalho/OpenMP
+cd /home/a77211/trabalho/PCP/OpenMP
 ./bin/kmeans_sf seq 5 10 2048 datasets/input2048.data
 ./bin/kmeans_sf seq 5 10 16384 datasets/input16384.data
 ./bin/kmeans_sf seq 5 10 1966080 datasets/input1966080.data

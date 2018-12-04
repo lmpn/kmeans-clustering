@@ -44,7 +44,8 @@ int main(int argc, char const *argv[])
         {
             utils_clear_cache();
             utils_start_timer();
-//            sets=kmc_par(clusters,size,xcomp,ycomp);
+
+            sets=kmc_par(clusters,size,xcomp,ycomp);
             utils_stop_timer();
         }
     }
