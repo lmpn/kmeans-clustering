@@ -45,4 +45,4 @@ all: checkdirs $(BIN_DIR)/$(BIN_NAME)
 delete:
 	rm -rf $(BUILD_DIR) $(BIN_DIR) $(ASM_DIR) $(OBJ_DIR)
 clean:
-	rm -rf $(BUILD_DIR)/* $(BIN_DIR)/* $(ASM_DIR)/* $(OBJ_DIR)/* out outp
+	rm -rf $(BUILD_DIR)/* $(BIN_DIR)/* $(ASM_DIR)/* $(OBJ_DIR)/* 

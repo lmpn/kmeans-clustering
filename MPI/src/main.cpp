@@ -40,44 +40,32 @@ int main(int argc, char *argv[])
     if (!strcmp(mode, PAR))
     {
         int myrank, nprocesses;
+        float times[repetitions];
+        float reptimes[repetitions*7];
         MPI_Init(&argc, &argv);
         MPI_Comm_size(MPI_COMM_WORLD, &nprocesses);
         MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
-        if (myrank == 0)
-            cout << "start;initPhase1;initPhase2;initPhase2;endPhase2;initPhase3;step1Phase3;step2Phase3;step3Phase3;endPhase3;end" << endl;
         for (int i = 0; i < repetitions; i++)
         {
             utils_clear_cache();
+            float x;
             if (myrank == 0)
-                printf("%lf;",MPI_Wtime());
-            kmc_mpi(clusters, size, xcomp, ycomp, myrank, nprocesses, &sets);
+            {
+		        x = MPI_Wtime();
+	        }
+            kmc_mpi(clusters, size, xcomp, ycomp, myrank, nprocesses, &sets, &(reptimes[i*7]));
             if (myrank == 0)
-                printf("%lf\n",MPI_Wtime());
+            {
+                times[i] = MPI_Wtime()-x;
+            }
         }
         MPI_Finalize();
         if (myrank != 0)
         {
             return 0;
         }
+        printMedian(times,reptimes,repetitions);
     }
-    else if (!strcmp(mode, SEQ))
-    {
-        utils_setup_papi(repetitions);
-        for (int i = 0; i < repetitions; i++)
-        {
-            utils_clear_cache();
-            utils_start_papi();
-            utils_start_timer();
-            sets = kmc_seq_initial(clusters, size, xcomp, ycomp);
-            //sets = kmc_seq_final(clusters, size, xcomp, ycomp);
-
-            utils_stop_timer();
-            utils_stop_papi(i);
-        }
-    }
-
-    utils_results();
-    utils_save_results("bin/kmc_out.csv", xcomp, ycomp, sets, size);
-    utils_clean_memory(xcomp, ycomp);
+    
     return 0;
 }

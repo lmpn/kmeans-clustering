@@ -1,7 +1,7 @@
 #!/./bin/sh
 
 #Dar nome ao processo
-#PBS -N Inicial
+#PBS -N MPIBYNODE
 
 #Tempo maximo do processo
 #PBS -l walltime=02:00:00
@@ -17,13 +17,15 @@
 #para onde mandar mails
 module load gcc/5.3.0
 module load gnu/openmpi_eth/1.8.4
-cd /home/a77211/trabalho/PCP/MPI
+cd /home/a77763/PCP/MPI
+export REDUCEBCAST=yes
+make clean
+make
 
-
-for datasets in input1966080.data input62914560.data
+for datasets in 1966080 62914560
 	do
 	for processos in 2 4 6 8 10 12 16 20 24 30 32
 		do
-		mpirun -bynode -np $processos --mca btl self,sm,tcp bin/kmeans_mpi par 8 10 $datasets
+		mpirun --map-by node -np $processos -report-bindings --mca btl self,sm,tcp bin/kmeans_mpi par 8 10 $datasets "datasets/input"$datasets".data" > "out/Node/ReduceBcast/"$datasets"_"$processos".txt"
 	done
 done

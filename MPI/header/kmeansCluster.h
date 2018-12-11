@@ -13,5 +13,5 @@
 int * kmc_seq_final(int clusters, int size, double *xcomp, double *ycomp);
 int * kmc_seq_initial(int clusters, int size, double *xcomp, double *ycomp);
 int * kmc_par(int clusters, int size, double *xcomp, double *ycomp);
-void  kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int myrank, int nproc, int** result);
+void  kmc_mpi(int, int, double *, double *, int , int , int** , float *);
 #endif
