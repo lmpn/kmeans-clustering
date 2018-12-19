@@ -6,7 +6,7 @@
 #Tempo maximo do processo
 #PBS -l walltime=02:00:00
 
-#PBS -l nodes=1:r662:ppn=48
+#PBS -l nodes=1:r641:ppn=1
 
 #Fila de espera para ir
 #PBS -q mei
@@ -15,10 +15,11 @@
 #PBS -m bea
 
 #para onde mandar mails
-#PBS -M a77211@alunos.uminho.pt
+#PBS -M a77763@alunos.uminho.pt
 module load papi/5.5.0 && module load gcc/7.2.0
-cd /home/a77211/trabalho/PCP/OpenMP
-./bin/kmeans_sf seq 5 10 2048 datasets/input2048.data
-./bin/kmeans_sf seq 5 10 16384 datasets/input16384.data
+cd /home/a77763/PCP/OpenMP
+export VERSION=final
+make clean
+make
 ./bin/kmeans_sf seq 5 10 1966080 datasets/input1966080.data
 ./bin/kmeans_sf seq 5 10 62914560 datasets/input62914560.data

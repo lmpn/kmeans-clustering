@@ -188,7 +188,7 @@ int * kmc_seq_initial(int clusters, int size, double *xcomp, double *ycomp)
 
 
 int * kmc_par(int clusters, int size, double * xcomp, double * ycomp) {
-
+/*
   std::mt19937 rng;
   uint32_t seed_val;
   rng.seed(seed_val);
@@ -264,7 +264,7 @@ int * kmc_par(int clusters, int size, double * xcomp, double * ycomp) {
 
   } while (error != c_error);
 return sets;
-
+*/
 }
 
 

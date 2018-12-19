@@ -174,7 +174,7 @@ int *kmc_seq_initial(int clusters, int size, double *xcomp, double *ycomp)
     return sets;
 }
 
-void kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int myrank, int nprocesses, int **result, float * times)
+void kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int myrank, int nprocesses, int **result, double * times)
 {
 
     /*
@@ -188,6 +188,9 @@ void kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int myrank, i
     double error = DBL_MAX;
     double c_error = DBL_MAX;
     double ti, tf, f1,f2;
+    int *sets_local = (int *)calloc(chunk_size, sizeof(int));
+    double *xcomp_local = (double *)_mm_malloc(chunk_size * sizeof(double), 64);
+    double *ycomp_local = (double *)_mm_malloc(chunk_size * sizeof(double), 64);
     if (myrank == 0)
     {
         ti = MPI_Wtime();
@@ -220,14 +223,14 @@ void kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int myrank, i
      * Declaring local variables
     */
 
-    int *sets_local = (int *)calloc(chunk_size, sizeof(int));
-    double *xcomp_local = (double *)_mm_malloc(chunk_size * sizeof(double), 64);
-    double *ycomp_local = (double *)_mm_malloc(chunk_size * sizeof(double), 64);
 
+    ti = MPI_Wtime();
     MPI_Scatter(xcomp, chunk_size, MPI_DOUBLE, xcomp_local, chunk_size, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     MPI_Scatter(ycomp, chunk_size, MPI_DOUBLE, ycomp_local, chunk_size, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     MPI_Bcast(centroid_x_global, clusters, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     MPI_Bcast(centroid_y_global, clusters, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    tf = MPI_Wtime();
+    times[1] = tf-ti;
     do
     {
         if (myrank == 0)
@@ -268,8 +271,7 @@ void kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int myrank, i
         if (myrank == 0)
         {
             f2 = MPI_Wtime();
-            //phase2
-            times[1] += f2-f1;
+            times[2] += f2-f1;
             f1=f2;
         }
 #ifdef REDUCEBCAST
@@ -291,7 +293,7 @@ void kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int myrank, i
             
             f2 = MPI_Wtime();
             //COMM1
-            times[2] += f2-f1;
+            times[3] += f2-f1;
             f1 = f2;
             for (int cluster_idx = 0; cluster_idx < clusters; cluster_idx++)
             {
@@ -300,10 +302,6 @@ void kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int myrank, i
                 centroid_y_global[cluster_idx] = 0.0;
                 sets_counter_global[cluster_idx] = 1 / sets_counter_global[cluster_idx];
             }
-            //PHASE31
-            f2 = MPI_Wtime();
-            times[3] += f2-f1;
-            f1=f2;
         }
         else
         {
@@ -364,6 +362,9 @@ void kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int myrank, i
                 sets_counter_global[k] = 0;
                 error = error + sets_counter_global[k] + sets_counter_global[k];
             }
+    	    f2 = MPI_Wtime();
+            times[6] += f2-f1;
+            f1=f2;
             int msg;
             if (error == c_error)
             {
@@ -372,7 +373,7 @@ void kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int myrank, i
                 MPI_Gather(sets_local, chunk_size, MPI_INT, sets_global, chunk_size, MPI_INT, 0, MPI_COMM_WORLD);
                 f2 = MPI_Wtime();
                 //PHASE33
-                times[6] += f2-f1;
+                times[7] += f2-f1;
                 f1=f2;
                 break;
             }
@@ -382,7 +383,7 @@ void kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int myrank, i
                 MPI_Bcast(&msg, 1, MPI_INT, 0, MPI_COMM_WORLD);
                 f2 = MPI_Wtime();
                 //PHASE33
-                times[6] += f2-f1;
+                times[7] += f2-f1;
                 f1=f2;
             }
         }

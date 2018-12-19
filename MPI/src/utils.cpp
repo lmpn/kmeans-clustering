@@ -34,23 +34,23 @@ long long unsigned utils_stop_section_timer (void)
 
 int compare (const void * a, const void * b)
 {
-  return ( *(float*)a - *(float*)b );
+  return ( *(double*)a - *(double*)b );
 }
 
-void printMedian(float *times, float* median, int repetitions)
+void printMedian(double *times, double* median, int repetitions)
 {
-	qsort (times, repetitions, sizeof(float), compare);
-	cout<<"exec;phase1;phase2;comm1;phase31;phase32;comm2;phase33" << endl;
-	printf("%ld;", times[repetitions/2]);
-	for(int i = 0; i < 7; i++)
+	qsort (times, repetitions, sizeof(double), compare);
+	cout<<"exec;phase1;comm0;phase2;comm1;phase31;comm2;phase32;comm3" << endl;
+	printf("%lf;", times[repetitions/2]);
+	for(int i = 0; i < 8; i++)
 	{
-		float temp[repetitions];
-		for(int j = 0; j < repetitions; i++)
+		double temp[repetitions];
+		for(int j = 0; j < repetitions; j++)
 		{
-			temp[j] = median[i+j*7];
+			temp[j] = median[i+j*8];
 		}
-		qsort (temp, repetitions, sizeof(float), compare);
-		printf("%ld;", temp[repetitions/2]);
+		qsort (temp, repetitions, sizeof(double), compare);
+		printf("%lf;", temp[repetitions/2]);
 	}
 }
 

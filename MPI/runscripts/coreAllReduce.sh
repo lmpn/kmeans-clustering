@@ -19,6 +19,7 @@ module load gcc/5.3.0
 module load gnu/openmpi_eth/1.8.4
 cd /home/a77763/PCP/MPI
 export ALLRED=yes
+export CORE=yes
 make clean
 make
 
@@ -26,6 +27,6 @@ for datasets in 1966080 62914560
 	do
 	for processos in 2 4 6 8 10 12 16 20 24 30 32
 		do
-		mpirun --map-by core -np $processos -report-bindings --mca btl self,sm,tcp bin/kmeans_mpi par 8 10 $datasets "datasets/input"$datasets".data" > "out/Core/AllReduce/"$datasets"_"$processos".txt"
+		mpirun --map-by ppr:1:core -np $processos -report-bindings --mca btl self,sm,tcp bin/mpi_core par 8 10 $datasets "datasets/input"$datasets".data" > "out/Core/AllReduce/"$datasets"_"$processos".txt"
 	done
 done

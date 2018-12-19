@@ -1,0 +1,8 @@
+rm -rf build/* bin/* asm/* obj/* 
+mpicxx -c -O3 -std=c++11 -g -ggdb3 -Wno-unused-parameter -DALLRED -Iheader  src/kmeansCluster.cpp -o build/kmeansCluster.o 
+mpicxx -c -O3 -std=c++11 -g -ggdb3 -Wno-unused-parameter -DALLRED -Iheader  src/main.cpp -o build/main.o 
+mpicxx -c -O3 -std=c++11 -g -ggdb3 -Wno-unused-parameter -DALLRED -Iheader  src/utils.cpp -o build/utils.o 
+mpicxx -c -O3 -std=c++11 -g -ggdb3 -Wno-unused-parameter -DALLRED -Iheader  src/kmeansCluster.cpp -o asm/kmeansCluster.s 
+mpicxx -c -O3 -std=c++11 -g -ggdb3 -Wno-unused-parameter -DALLRED -Iheader  src/main.cpp -o asm/main.s 
+mpicxx -c -O3 -std=c++11 -g -ggdb3 -Wno-unused-parameter -DALLRED -Iheader  src/utils.cpp -o asm/utils.s 
+mpicxx -O3 -std=c++11 -g -ggdb3 -Wno-unused-parameter -DALLRED -Iheader  -o bin/kmeans_mpi build/kmeansCluster.o build/main.o build/utils.o

@@ -40,20 +40,20 @@ int main(int argc, char *argv[])
     if (!strcmp(mode, PAR))
     {
         int myrank, nprocesses;
-        float times[repetitions];
-        float reptimes[repetitions*7];
+        double times[repetitions];
+        double reptimes[repetitions*8];
         MPI_Init(&argc, &argv);
         MPI_Comm_size(MPI_COMM_WORLD, &nprocesses);
         MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
         for (int i = 0; i < repetitions; i++)
         {
             utils_clear_cache();
-            float x;
+            double x;
             if (myrank == 0)
             {
 		        x = MPI_Wtime();
 	        }
-            kmc_mpi(clusters, size, xcomp, ycomp, myrank, nprocesses, &sets, &(reptimes[i*7]));
+            kmc_mpi(clusters, size, xcomp, ycomp, myrank, nprocesses, &sets, &(reptimes[i*8]));
             if (myrank == 0)
             {
                 times[i] = MPI_Wtime()-x;

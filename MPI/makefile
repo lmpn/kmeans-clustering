@@ -9,7 +9,16 @@ endif
 ifeq ($(REDUCEBCAST), yes)
 	CXXFLAGS += -DREDUCEBCAST
 endif
-BIN_NAME = kmeans_mpi
+
+
+
+ifeq ($(NODE),yes)
+	BIN_NAME=mpi_node
+endif
+ifeq ($(CORE),yes)
+	BIN_NAME=mpi_core	
+endif
+
 SRC_DIR = src
 BIN_DIR = bin
 OBJ_DIR = obj
@@ -33,7 +42,6 @@ $(BUILD_DIR)/%.o: %.cpp
 	$(CXX) -c $(CXXFLAGS) $(INCLUDES) $(LIBS) $< -o $@ 
 $(ASM_DIR)/%.s: %.cpp
 	$(CXX) -c $(CXXFLAGS) $(INCLUDES) $(LIBS) $< -o $@ 
-	
 checkdirs:
 	@mkdir -p $(BUILD_DIR)
 	@mkdir -p $(BIN_DIR)
@@ -45,4 +53,4 @@ all: checkdirs $(BIN_DIR)/$(BIN_NAME)
 delete:
 	rm -rf $(BUILD_DIR) $(BIN_DIR) $(ASM_DIR) $(OBJ_DIR)
 clean:
-	rm -rf $(BUILD_DIR)/* $(BIN_DIR)/* $(ASM_DIR)/* $(OBJ_DIR)/* 
+	rm -rf $(BUILD_DIR)/* $(ASM_DIR)/* $(OBJ_DIR)/* 

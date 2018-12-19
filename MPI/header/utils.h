@@ -29,5 +29,5 @@ void utils_results();
 void utils_save_results(char const * , double *, double *, int * , int);
 void utils_clear_cache (void); 
 int utils_read_dataset(char const * filename, double* xcomp, double* ycomp);
-void printMedian(float*, float*,int);
+void printMedian(double*, double*,int);
 #endif 

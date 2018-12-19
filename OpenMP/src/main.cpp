@@ -57,8 +57,8 @@ int main(int argc, char const *argv[])
             utils_clear_cache();
             utils_start_papi();
             utils_start_timer();
-            sets = kmc_seq_initial(clusters, size, xcomp, ycomp);
-            //sets = kmc_seq_final(clusters, size, xcomp, ycomp);
+            //sets = kmc_seq_initial(clusters, size, xcomp, ycomp);
+            sets = kmc_seq_final(clusters, size, xcomp, ycomp);
 
             utils_stop_timer();
             utils_stop_papi(i);
@@ -66,7 +66,7 @@ int main(int argc, char const *argv[])
     }
 
     utils_results();
-    utils_save_results("bin/kmc_out.csv",xcomp,ycomp,sets,size);
+    //utils_save_results("bin/kmc_out.csv",xcomp,ycomp,sets,size);
     utils_clean_memory(xcomp, ycomp); 
     return 0;
 }
