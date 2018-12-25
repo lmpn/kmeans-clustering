@@ -51,12 +51,12 @@ int main(int argc, char *argv[])
             double x;
             if (myrank == 0)
             {
-		        x = MPI_Wtime();
+		        utils_start_section_timer();
 	        }
             kmc_mpi(clusters, size, xcomp, ycomp, myrank, nprocesses, &sets, &(reptimes[i*8]));
             if (myrank == 0)
             {
-                times[i] = MPI_Wtime()-x;
+                printf("%llu\n",utils_stop_section_timer());
             }
         }
         MPI_Finalize();
@@ -64,7 +64,6 @@ int main(int argc, char *argv[])
         {
             return 0;
         }
-        printMedian(times,reptimes,repetitions);
     }
     
     return 0;

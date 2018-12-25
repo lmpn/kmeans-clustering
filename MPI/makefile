@@ -9,16 +9,22 @@ endif
 ifeq ($(REDUCEBCAST), yes)
 	CXXFLAGS += -DREDUCEBCAST
 endif
-
-
-
 ifeq ($(NODE),yes)
-	BIN_NAME=mpi_node
+	ifeq ($(ALLRED), yes)
+		BIN_NAME = allred_mpi_node
+	endif
+	ifeq ($(REDUCEBCAST), yes)
+		BIN_NAME = reduce_bcast_node
+	endif
 endif
 ifeq ($(CORE),yes)
-	BIN_NAME=mpi_core	
+	ifeq ($(ALLRED), yes)
+		BIN_NAME = allred_mpi_core
+	endif
+	ifeq ($(REDUCEBCAST), yes)
+		BIN_NAME = reduce_bcast_core
+	endif
 endif
-
 SRC_DIR = src
 BIN_DIR = bin
 OBJ_DIR = obj

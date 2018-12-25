@@ -87,99 +87,17 @@ int *kmc_seq_final(int clusters, int size, double *xcomp, double *ycomp)
     return sets;
 }
 
-int *kmc_seq_initial(int clusters, int size, double *xcomp, double *ycomp)
-{
-    std::mt19937 rng;
-    uint32_t seed_val;
-    rng.seed(seed_val);
-
-    int *sets = (int *)calloc(size, sizeof(int));
-    int point_set_idx = 0;
-    int *sets_counter = (int *)calloc(clusters, sizeof(int));
-    int current_point_cluster_idx = -1;
-    double max = -DBL_MAX;
-    double norm = 0.0;
-    double error = DBL_MAX;
-    double minimun_distance = DBL_MAX;
-    double random_real = 0.0;
-
-    double *centroid = (double *)malloc(sizeof(double) * clusters * 2);
-    double *centroid_old = (double *)malloc(sizeof(double) * clusters * 2);
-    double centroid_point_distance = 0.0;
-    for (size_t i = 0; i < size; i++)
-    {
-        if (max < xcomp[i])
-            max = xcomp[i];
-        if (max < ycomp[i])
-            max = ycomp[i];
-    }
-    uniform_real_distribution<double> urd_g(0, max);
-    for (int i = 0; i < clusters; i++)
-    {
-        centroid[i * 2] = urd_g(rng);
-        centroid[1 + i * 2] = urd_g(rng);
-    }
-
-    while (error != norm)
-    {
-        error = norm;
-        norm = 0.0;
-
-        for (int point_idx = 0; point_idx < size; point_idx++)
-        {
-            for (int cluster_idx = 0; cluster_idx < clusters; cluster_idx++)
-            {
-                double dx = centroid[cluster_idx * 2] - xcomp[point_idx];
-                double dy = centroid[cluster_idx * 2 + 1] - ycomp[point_idx];
-                double centroid_point_distance = sqrt(pow(dx, 2.0) + pow(dy, 2.0));
-                if (minimun_distance > centroid_point_distance)
-                {
-                    minimun_distance = centroid_point_distance;
-                    current_point_cluster_idx = cluster_idx;
-                }
-            }
-
-            sets_counter[current_point_cluster_idx]++;
-            sets[point_idx] = current_point_cluster_idx;
-            current_point_cluster_idx = -1;
-            minimun_distance = DBL_MAX;
-        }
-
-        for (int k_idx = 0; k_idx < clusters * 2; k_idx++)
-        {
-            centroid_old[k_idx] = centroid[k_idx];
-            centroid[k_idx] = 0.0;
-        }
-
-        for (int i = 0; i < size; i++)
-        {
-            int point_set_idx = sets[i] * 2;
-            centroid[point_set_idx] += xcomp[i];
-            centroid[point_set_idx + 1] += ycomp[i];
-        }
-        for (int k = 0; k < clusters; k++)
-        {
-            int set_size = sets_counter[k];
-            sets_counter[k] = 0;
-            centroid[k * 2] = centroid[k * 2] / set_size;
-            centroid[k * 2 + 1] = centroid[k * 2 + 1] / set_size;
-            norm += centroid[k * 2] - centroid_old[k * 2];
-            norm += centroid[k * 2 + 1] - centroid_old[k * 2 + 1];
-        }
-        current_point_cluster_idx = -1;
-        point_set_idx = 0;
-        minimun_distance = DBL_MAX;
-    }
-
-    return sets;
-}
 
 void kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int myrank, int nprocesses, int **result, double * times)
 {
 
+
+
+//utils_stop_section_timer
     /*
     * Declaring global variables
     */
+    long long unsigned t[8] = {0,0,0,0,0,0,0,0};
     double centroid_x_global[clusters];
     double centroid_y_global[clusters];
     int *sets_global = (int *)calloc(size, sizeof(int));
@@ -187,13 +105,13 @@ void kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int myrank, i
     int chunk_size = size / nprocesses;
     double error = DBL_MAX;
     double c_error = DBL_MAX;
-    double ti, tf, f1,f2;
+    double start, end;
     int *sets_local = (int *)calloc(chunk_size, sizeof(int));
     double *xcomp_local = (double *)_mm_malloc(chunk_size * sizeof(double), 64);
     double *ycomp_local = (double *)_mm_malloc(chunk_size * sizeof(double), 64);
     if (myrank == 0)
     {
-        ti = MPI_Wtime();
+        utils_start_section_timer();
         std::mt19937 rng;
         uint32_t seed_val;
         rng.seed(seed_val);
@@ -215,8 +133,7 @@ void kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int myrank, i
             centroid_x_global[i] = urd_g(rng);
             centroid_y_global[i] = urd_g(rng);
         }
-        tf = MPI_Wtime();
-        times[0] = tf-ti;
+        printf("%llu;",utils_stop_section_timer());
     }
 
     /*
@@ -224,19 +141,19 @@ void kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int myrank, i
     */
 
 
-    ti = MPI_Wtime();
+    utils_start_section_timer();
     MPI_Scatter(xcomp, chunk_size, MPI_DOUBLE, xcomp_local, chunk_size, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     MPI_Scatter(ycomp, chunk_size, MPI_DOUBLE, ycomp_local, chunk_size, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     MPI_Bcast(centroid_x_global, clusters, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     MPI_Bcast(centroid_y_global, clusters, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-    tf = MPI_Wtime();
-    times[1] = tf-ti;
+    printf("%llu;",utils_stop_section_timer());
+    
     do
     {
         if (myrank == 0)
         {
             //phase1
-            f1 = MPI_Wtime();
+            utils_start_section_timer();
             c_error = error;
             error = 0.0;
         }
@@ -270,9 +187,9 @@ void kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int myrank, i
 
         if (myrank == 0)
         {
-            f2 = MPI_Wtime();
-            times[2] += f2-f1;
-            f1=f2;
+            
+            times[2] += utils_stop_section_timer();
+
         }
 #ifdef REDUCEBCAST
         if (myrank == 0)
@@ -291,10 +208,10 @@ void kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int myrank, i
         if (myrank == 0)
         {
             
-            f2 = MPI_Wtime();
+            
             //COMM1
-            times[3] += f2-f1;
-            f1 = f2;
+            times[3] += utils_stop_section_timer();;
+            utils_start_section_timer();
             for (int cluster_idx = 0; cluster_idx < clusters; cluster_idx++)
             {
                 error = error - centroid_y_global[cluster_idx] - centroid_x_global[cluster_idx];
@@ -322,9 +239,9 @@ void kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int myrank, i
         if (myrank == 0)
         {
             //PHASE32
-            f2 = MPI_Wtime();
-            times[4] += f2-f1;
-            f1=f2;
+            
+            times[4] += utils_stop_section_timer();;
+            start=end;
         }
 
 #ifdef REDUCEBCAST
@@ -353,38 +270,38 @@ void kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int myrank, i
 #endif
         if (myrank == 0)
         {
-            f2 = MPI_Wtime();
+            
             //COMM2
-            times[5] += f2-f1;
-            f1=f2;
+            times[5] += utils_stop_section_timer();;
+            start=end;
             for (int k = 0; k < clusters; k++)
             {
                 sets_counter_global[k] = 0;
                 error = error + sets_counter_global[k] + sets_counter_global[k];
             }
-    	    f2 = MPI_Wtime();
-            times[6] += f2-f1;
-            f1=f2;
+    	    
+            times[6] += utils_stop_section_timer();;
+            start=end;
             int msg;
             if (error == c_error)
             {
                 msg = 1;
                 MPI_Bcast(&msg, 1, MPI_INT, 0, MPI_COMM_WORLD);
                 MPI_Gather(sets_local, chunk_size, MPI_INT, sets_global, chunk_size, MPI_INT, 0, MPI_COMM_WORLD);
-                f2 = MPI_Wtime();
+                
                 //PHASE33
-                times[7] += f2-f1;
-                f1=f2;
+                times[7] += utils_stop_section_timer();;
+                start=end;
                 break;
             }
             else
             {
                 msg = 0;
                 MPI_Bcast(&msg, 1, MPI_INT, 0, MPI_COMM_WORLD);
-                f2 = MPI_Wtime();
+                
                 //PHASE33
-                times[7] += f2-f1;
-                f1=f2;
+                times[7] += utils_stop_section_timer();;
+                start=end;
             }
         }
         else
