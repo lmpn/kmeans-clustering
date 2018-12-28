@@ -139,7 +139,7 @@ void kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int myrank, i
   MPI_Bcast(centroid_x_global, clusters, MPI_DOUBLE, 0, MPI_COMM_WORLD);
   MPI_Bcast(centroid_y_global, clusters, MPI_DOUBLE, 0, MPI_COMM_WORLD);
   if(myrank == 0){
-    printf("comm1:%llu;",stop_time(start));
+    printf("comm0:%llu;",stop_time(start));
   }
 
   do
@@ -213,45 +213,12 @@ void kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int myrank, i
       centroid_x_global[point_set_idx]     += xcomp_local[i] * set_size;
       centroid_y_global[point_set_idx]     += ycomp_local[i] * set_size;
     }
-    for (int k = 0; k < clusters; k++)
-    {
-      sets_counter_global[k] = 0;
-      error = error + sets_counter_global[k] + sets_counter_global[k];
-    }
-
     if (myrank == 0)
     {
       //end time of phase3
       t[2] += stop_time(start);
-      //start of end
+      //start of comm2
       start = start_time();
-      int msg;
-      if (error == c_error)
-      {
-        msg = 1;
-        MPI_Bcast(&msg, 1, MPI_INT, 0, MPI_COMM_WORLD);
-        MPI_Gather(sets_local, chunk_size, MPI_INT, sets_global, chunk_size, MPI_INT, 0, MPI_COMM_WORLD);
-        break;
-      }
-      else
-      {
-        msg = 0;
-        MPI_Bcast(&msg, 1, MPI_INT, 0, MPI_COMM_WORLD);
-      }
-      //end of end
-      t[3] += stop_time(start);
-      //start comm2
-      start = start_time(start);
-    }
-    else
-    {
-      int msg;
-      MPI_Bcast(&msg, 1, MPI_INT, 0, MPI_COMM_WORLD);
-      if (msg == 1)
-      {
-        MPI_Gather(sets_local, chunk_size, MPI_INT, sets_global, chunk_size, MPI_INT, 0, MPI_COMM_WORLD);
-        break;
-      }
     }
 
 #ifdef REDUCEBCAST
@@ -281,19 +248,55 @@ void kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int myrank, i
     if (myrank == 0)
     {
       //end comm2
-      t[4] += stop_time(start);
+      t[3] += stop_time(start);
+      //start error check
+      start = start_time();
     }
 
+    for (int k = 0; k < clusters; k++)
+    {
+      sets_counter_global[k] = 0;
+      error = error + sets_counter_global[k] + sets_counter_global[k];
+    }
+
+    if (myrank == 0)
+    {
+      int msg;
+      if (error == c_error)
+      {
+        msg = 1;
+        MPI_Bcast(&msg, 1, MPI_INT, 0, MPI_COMM_WORLD);
+        MPI_Gather(sets_local, chunk_size, MPI_INT, sets_global, chunk_size, MPI_INT, 0, MPI_COMM_WORLD);
+        t[5] += stop_time(start);
+        break;
+      }
+      else
+      {
+        msg = 0;
+        MPI_Bcast(&msg, 1, MPI_INT, 0, MPI_COMM_WORLD);
+      }
+      t[4] += stop_time(start);
+    }
+    else
+    {
+      int msg;
+      MPI_Bcast(&msg, 1, MPI_INT, 0, MPI_COMM_WORLD);
+      if (msg == 1)
+      {
+        MPI_Gather(sets_local, chunk_size, MPI_INT, sets_global, chunk_size, MPI_INT, 0, MPI_COMM_WORLD);
+        break;
+      }
+    }
   } while (true);
 
   if (myrank == 0)
   {
     *result = sets_global;
     printf("phase2:%llu;",t[0]);
-    printf("comm2:%llu;",t[1]);
+    printf("comm1:%llu;",t[1]);
     printf("phase3:%llu;",t[2]);
-    printf("end:%llu;",t[3]);
-    printf("comm3:%llu;",t[4]);
+    printf("comm3:%llu;",t[3]);
+    printf("end:%llu;",t[4]);
   }
 
   return;
