@@ -40,24 +40,16 @@ int main(int argc, char *argv[])
     if (!strcmp(mode, PAR))
     {
         int myrank, nprocesses;
-        double times[repetitions];
-        double reptimes[repetitions*8];
+        long long unsigned rtimes;
         MPI_Init(&argc, &argv);
         MPI_Comm_size(MPI_COMM_WORLD, &nprocesses);
         MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
         for (int i = 0; i < repetitions; i++)
         {
             utils_clear_cache();
-            double x;
-            if (myrank == 0)
-            {
-		        utils_start_section_timer();
-	        }
-            kmc_mpi(clusters, size, xcomp, ycomp, myrank, nprocesses, &sets, &(reptimes[i*8]));
-            if (myrank == 0)
-            {
-                printf("%llu\n",utils_stop_section_timer());
-            }
+            rtimes = start_time();
+            kmc_mpi(clusters, size, xcomp, ycomp, myrank, nprocesses, &sets);
+            printf("exec%d:%llu\n",myrank,stop_time(rtimes));
         }
         MPI_Finalize();
         if (myrank != 0)

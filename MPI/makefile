@@ -11,18 +11,18 @@ ifeq ($(REDUCEBCAST), yes)
 endif
 ifeq ($(NODE),yes)
 	ifeq ($(ALLRED), yes)
-		BIN_NAME = allred_mpi_node
+		BIN_NAME = arnode
 	endif
 	ifeq ($(REDUCEBCAST), yes)
-		BIN_NAME = reduce_bcast_node
+		BIN_NAME = rbnode
 	endif
 endif
 ifeq ($(CORE),yes)
 	ifeq ($(ALLRED), yes)
-		BIN_NAME = allred_mpi_core
+		BIN_NAME = arcore
 	endif
 	ifeq ($(REDUCEBCAST), yes)
-		BIN_NAME = reduce_bcast_core
+		BIN_NAME = rbcore
 	endif
 endif
 SRC_DIR = src

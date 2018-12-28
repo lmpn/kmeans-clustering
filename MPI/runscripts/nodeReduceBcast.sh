@@ -1,7 +1,7 @@
 #!/./bin/sh
 
 #Dar nome ao processo
-#PBS -N MPIBYNODE
+#PBS -N rbnode
 
 #Tempo maximo do processo
 #PBS -l walltime=02:00:00
@@ -25,8 +25,8 @@ make
 
 for datasets in 1966080 62914560
 	do
-	for processos in 2 4 8 16 32
+	for processos in 2 4 8 12 16 24 32
 		do
-		mpirun --map-by node -np $processos -report-bindings --mca btl self,sm,tcp bin/mpi_node par 8 10 $datasets "datasets/input"$datasets".data" > "out/Node/ReduceBcast/"$datasets"_"$processos".txt"
+		mpirun --map-by node -np $processos -report-bindings --mca btl self,sm,tcp bin/rbnode par 8 10 $datasets "datasets/input"$datasets".data" > "out/rbnode"$processos"_"$datasets
 	done
 done

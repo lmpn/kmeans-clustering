@@ -32,27 +32,22 @@ long long unsigned utils_stop_section_timer (void)
 	return (final_time - partial_time);
 }
 
-int compare (const void * a, const void * b)
+
+long long unsigned start_time (void) 
 {
-  return ( *(double*)a - *(double*)b );
+	gettimeofday(&t, NULL);
+	long long unsigned partial = t.tv_sec * TIME_RESOLUTION + t.tv_usec;
+	return partial;
 }
 
-void printMedian(double *times, double* median, int repetitions)
+long long unsigned stop_time (long long unsigned partial) 
 {
-	qsort (times, repetitions, sizeof(double), compare);
-	cout<<"exec;phase1;comm0;phase2;comm1;phase31;comm2;phase32;comm3" << endl;
-	printf("%lf;", times[repetitions/2]);
-	for(int i = 0; i < 8; i++)
-	{
-		double temp[repetitions];
-		for(int j = 0; j < repetitions; j++)
-		{
-			temp[j] = median[i+j*8];
-		}
-		qsort (temp, repetitions, sizeof(double), compare);
-		printf("%lf;", temp[repetitions/2]);
-	}
+	gettimeofday(&t, NULL);
+	long long unsigned final_time = t.tv_sec * TIME_RESOLUTION + t.tv_usec;
+	return (final_time - partial);
 }
+
+
 
 void utils_stop_timer (void) 
 {
