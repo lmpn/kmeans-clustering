@@ -38,5 +38,6 @@
         "typeinfo": "cpp",
         "utility": "cpp"
     },
-    "python.linting.pylintEnabled": true
+    "python.linting.pylintEnabled": true,
+    "C_Cpp.dimInactiveRegions": false
 }

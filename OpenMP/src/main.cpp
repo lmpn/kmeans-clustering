@@ -1,5 +1,6 @@
 #include <utils.h>
 #include <kmeansCluster.h>
+#include <mm_malloc.h>
 
 
 using namespace std;
@@ -29,8 +30,8 @@ int main(int argc, char const *argv[])
     clusters = atoi(argv[3]); 
     size = atoi(argv[4]);
     filename = argv[5];
-    xcomp = (double *) malloc(sizeof(double)* size);
-    ycomp = (double *) malloc(sizeof(double)* size);
+    xcomp = (double *) _mm_malloc(sizeof(double)* size,64);
+    ycomp = (double *) _mm_malloc(sizeof(double)* size,64);
     int utils_error = utils_read_dataset(filename,xcomp,ycomp);
 
     if(utils_error == -1)

@@ -1,0 +1,43 @@
+rm -rf build/* asm/* obj/* out outp
+g++ -c -fopenmp -O3 -std=c++11 -g -ggdb3 -Wno-unused-parameter -Iheader  src/kmeansCluster.cpp -o build/kmeansCluster.o 
+g++ -c -fopenmp -O3 -std=c++11 -g -ggdb3 -Wno-unused-parameter -Iheader  src/main.cpp -o build/main.o 
+g++ -c -fopenmp -O3 -std=c++11 -g -ggdb3 -Wno-unused-parameter -Iheader  src/utils.cpp -o build/utils.o 
+g++ -c -fopenmp -O3 -std=c++11 -g -ggdb3 -Wno-unused-parameter -Iheader  src/kmeansCluster.cpp -o asm/kmeansCluster.s 
+g++ -c -fopenmp -O3 -std=c++11 -g -ggdb3 -Wno-unused-parameter -Iheader  src/main.cpp -o asm/main.s 
+g++ -c -fopenmp -O3 -std=c++11 -g -ggdb3 -Wno-unused-parameter -Iheader  src/utils.cpp -o asm/utils.s 
+g++ -fopenmp -O3 -std=c++11 -g -ggdb3 -Wno-unused-parameter -Iheader  -o bin/kmeans_par build/kmeansCluster.o build/main.o build/utils.o
+Execution Time #0: 6388.82ms
+Execution Time #1: 6228.23ms
+Execution Time #2: 6217.98ms
+Execution Time #3: 6203.81ms
+Execution Time #4: 6212.1ms
+Execution Time #0: 3231.29ms
+Execution Time #1: 3207.64ms
+Execution Time #2: 3208.69ms
+Execution Time #3: 3202.14ms
+Execution Time #4: 3256.83ms
+Execution Time #0: 1807.91ms
+Execution Time #1: 1737.52ms
+Execution Time #2: 1940.62ms
+Execution Time #3: 1736.77ms
+Execution Time #4: 1736.85ms
+Execution Time #0: 1265.29ms
+Execution Time #1: 1551.78ms
+Execution Time #2: 1272.91ms
+Execution Time #3: 1438.76ms
+Execution Time #4: 1515.39ms
+Execution Time #0: 1026.03ms
+Execution Time #1: 1005.33ms
+Execution Time #2: 1214.56ms
+Execution Time #3: 990.458ms
+Execution Time #4: 1025.37ms
+Execution Time #0: 664.973ms
+Execution Time #1: 741.659ms
+Execution Time #2: 639.582ms
+Execution Time #3: 678.644ms
+Execution Time #4: 682.752ms
+Execution Time #0: 493.605ms
+Execution Time #1: 500.122ms
+Execution Time #2: 495.488ms
+Execution Time #3: 473.582ms
+Execution Time #4: 540.475ms

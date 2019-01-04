@@ -1,6 +1,7 @@
 #include <kmeansCluster.h>
 using namespace std;
 #include <omp.h>
+#include <mm_malloc.h>
 
 int * kmc_seq_final(int clusters, int size, double *xcomp, double *ycomp)
 {
@@ -9,20 +10,21 @@ int * kmc_seq_final(int clusters, int size, double *xcomp, double *ycomp)
     std::mt19937 rng;
     uint32_t seed_val;
     rng.seed(seed_val);
-    int*    sets                      = (int *) calloc(size,sizeof(int));
+    int *    sets                      = (int *) _mm_malloc(sizeof(int)*size,8);
     int     point_set_idx             = 0;
-    double* sets_counter              = (double *) calloc(clusters,sizeof(double));
+    double* sets_counter              = (double *) _mm_malloc(sizeof(double)*clusters,64);
     double  max                       = -DBL_MAX;
     double  error                     = DBL_MAX;
     double  c_error = DBL_MAX;
 
-    double centroid_x[clusters];
-    double centroid_y[clusters];
+    double *centroid_x=(double*)_mm_malloc(sizeof(double)*clusters,64);
+    double *centroid_y = (double*)_mm_malloc(sizeof(double)*clusters,64);
 
 
 
     for(size_t i = 0; i < size; i++)
     {
+sets[i] = -1;
         if(max < xcomp[i])
             max = xcomp[i];
         if(max < ycomp[i])
@@ -30,6 +32,7 @@ int * kmc_seq_final(int clusters, int size, double *xcomp, double *ycomp)
     }
     uniform_real_distribution<double> urd_g(0,max); 
     for(int i = 0 ; i < clusters; i++){
+	sets_counter[i] = 0;
         centroid_x[i] = urd_g(rng);
         centroid_y[i] = urd_g(rng);
     }
@@ -188,21 +191,23 @@ int * kmc_seq_initial(int clusters, int size, double *xcomp, double *ycomp)
 
 
 int * kmc_par(int clusters, int size, double * xcomp, double * ycomp) {
-/*
-  std::mt19937 rng;
-  uint32_t seed_val;
-  rng.seed(seed_val);
-  int * sets = (int * ) calloc(size, sizeof(int));
-  int point_set_idx = 0;
-  double * sets_counter = (double * ) calloc(clusters, sizeof(double));
-  double max = -DBL_MAX;
-  double error = DBL_MAX;
-  double c_error = DBL_MAX;
+    std::mt19937 rng;
+    uint32_t seed_val;
+    rng.seed(seed_val);
+    int *    sets                      = (int *) _mm_malloc(sizeof(int)*size,8);
+    int     point_set_idx             = 0;
+    double* sets_counter              = (double *) _mm_malloc(sizeof(double)*clusters,64);
+    double  max                       = -DBL_MAX;
+    double  error                     = DBL_MAX;
+    double  c_error = DBL_MAX;
 
-  double centroid_x[clusters];
-  double centroid_y[clusters];
+    double *centroid_x=(double*)_mm_malloc(sizeof(double)*clusters,64);
+    double *centroid_y = (double*)_mm_malloc(sizeof(double)*clusters,64);
+
+
 
   for (size_t i = 0; i < size; i++) {
+sets[i] = -1;
     if (max < xcomp[i])
       max = xcomp[i];
     if (max < ycomp[i])
@@ -210,6 +215,7 @@ int * kmc_par(int clusters, int size, double * xcomp, double * ycomp) {
   }
   uniform_real_distribution < double > urd_g(0, max);
   for (int i = 0; i < clusters; i++) {
+	sets_counter[i] = 0;
     centroid_x[i] = urd_g(rng);
     centroid_y[i] = urd_g(rng);
   }
@@ -264,7 +270,7 @@ int * kmc_par(int clusters, int size, double * xcomp, double * ycomp) {
 
   } while (error != c_error);
 return sets;
-*/
+
 }
 
 

@@ -1,7 +1,7 @@
 #!/./bin/sh
 
 #Dar nome ao processo
-#PBS -N MPIBYNODE
+#PBS -N arnode
 
 #Tempo maximo do processo
 #PBS -l walltime=02:00:00
@@ -13,6 +13,7 @@
 
 #mandar mail no principio(b) no final(e) e em caso de aborto(a)
 #PBS -m bea
+#PBS -M a77763@alunos.uminho.pt 
 
 #para onde mandar mails
 module load gcc/5.3.0
@@ -23,10 +24,10 @@ export NODE=yes
 make clean
 make
 
-for datasets in 1966080 62914560
+for datasets in  62914560
 do
-	for processos in 2 4 8 16 32
+	for processos in 2 4 8 12 16 24 32
 	do
-		mpirun --map-by node -np $processos -report-bindings --mca btl self,sm,tcp bin/mpi_node par 8 10 $datasets "datasets/input"$datasets".data" > "out/Node/AllReduce/"$datasets"_"$processos".txt"
+		mpirun --map-by node -np $processos -report-bindings --mca btl self,sm,tcp bin/arnode par 8 10 $datasets "datasets/input"$datasets".data" > "out/Node - AllReduce_"$processos"_"$datasets
 	done
 done

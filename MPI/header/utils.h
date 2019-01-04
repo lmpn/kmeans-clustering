@@ -16,7 +16,8 @@
 #define MAX_THREADS 48 // maximum number of threads to run
 
 
-
+long long unsigned stop_time (long long unsigned partial);
+long long unsigned start_time (void);
 void utils_start_section_timer (void);
 long long unsigned utils_stop_section_timer (void);
 void utils_stop_timer (void);

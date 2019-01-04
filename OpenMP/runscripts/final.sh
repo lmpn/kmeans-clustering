@@ -6,7 +6,7 @@
 #Tempo maximo do processo
 #PBS -l walltime=02:00:00
 
-#PBS -l nodes=1:r641:ppn=1
+#PBS -l nodes=1:r641:ppn=32
 
 #Fila de espera para ir
 #PBS -q mei
