@@ -1,14 +1,13 @@
 SHELL = /bin/sh
 CXX = mpicxx
 LD  = mpicxx
-CXXFLAGS = -O3 -std=c++11 -g -ggdb3 -Wno-unused-parameter
+CXXFLAGS = -O3 -std=c++11 -g -ggdb3 -Wno-unused-parameter -DREDUCEBCAST
+BIN_NAME = rbcore
 
 ifeq ($(ALLRED), yes)
-	CXXFLAGS += -DALLRED
+	CXXFLAGS = -O3 -std=c++11 -g -ggdb3 -Wno-unused-parameter -DALLRED 
 endif
-ifeq ($(REDUCEBCAST), yes)
-	CXXFLAGS += -DREDUCEBCAST
-endif
+
 ifeq ($(NODE),yes)
 	ifeq ($(ALLRED), yes)
 		BIN_NAME = arnode
@@ -20,9 +19,6 @@ endif
 ifeq ($(CORE),yes)
 	ifeq ($(ALLRED), yes)
 		BIN_NAME = arcore
-	endif
-	ifeq ($(REDUCEBCAST), yes)
-		BIN_NAME = rbcore
 	endif
 endif
 SRC_DIR = src
