@@ -47,9 +47,7 @@ int main(int argc, char *argv[])
         for (int i = 0; i < repetitions; i++)
         {
             utils_clear_cache();
-            rtimes = start_time();
             kmc_mpi(clusters, size, xcomp, ycomp, myrank, nprocesses, &sets);
-            printf("exec%d:%llu\n",myrank,stop_time(rtimes));
         }
         MPI_Finalize();
         if (myrank != 0)
