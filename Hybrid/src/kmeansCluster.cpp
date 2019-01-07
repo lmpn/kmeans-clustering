@@ -2,7 +2,7 @@
 using namespace std;
 #include <mpi.h>
 #include <mm_malloc.h>
-
+#include <omp.h>
 
 
 
@@ -10,13 +10,13 @@ void kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int myrank, i
 {
   double centroid_x_global[clusters];
   double centroid_y_global[clusters];
-  int *sets_global = (int *)calloc(size, sizeof(int));
-  double *sets_counter_global = (double *)calloc(clusters, sizeof(double));
+  int *sets_global = (int *)_mm_malloc(size, sizeof(int));
+  double *sets_counter_global = (double *)_mm_malloc(clusters, sizeof(double));
   int chunk_size = size / nprocesses;
   double error = DBL_MAX;
   double c_error = DBL_MAX;
   long long unsigned start;
-  int *sets_local = (int *)calloc(chunk_size, sizeof(int));
+  int *sets_local = (int *)_mm_malloc(chunk_size, sizeof(int));
   double *xcomp_local = (double *)_mm_malloc(chunk_size * sizeof(double), 64);
   double *ycomp_local = (double *)_mm_malloc(chunk_size * sizeof(double), 64);
   if (myrank == 0) {
@@ -31,6 +31,9 @@ void kmc_mpi(int clusters, int size, double *xcomp, double *ycomp, int myrank, i
         max = xcomp[i];
       if (max < ycomp[i])
         max = ycomp[i];
+    	sets_global[i]=0;
+    	sets_counter_global[i]=0;
+    	sets_local[i]=0;
     }
 
     uniform_real_distribution<double> urd_g(0, max);
