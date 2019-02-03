@@ -19,6 +19,7 @@ int *kmc_seq_final(int clusters, int size, double *xcomp, double *ycomp)
   double centroid_x[clusters];
   double centroid_y[clusters];
 
+
   for (size_t i     = 0; i < size; i++)
   {
     if (max < xcomp[i])
@@ -26,7 +27,7 @@ int *kmc_seq_final(int clusters, int size, double *xcomp, double *ycomp)
     if (max < ycomp[i])
       max       = ycomp[i];
   }
-  uniform_real_distribution<double> urd_g(0, max);
+  std::uniform_real_distribution<double> urd_g(0, max);
   for (int i        = 0; i < clusters; i++)
   {
     centroid_x[i] = urd_g(rng);

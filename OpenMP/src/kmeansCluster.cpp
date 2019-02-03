@@ -1,7 +1,8 @@
 #include <kmeansCluster.h>
-using namespace std;
 #include <omp.h>
 #include <mm_malloc.h>
+
+using namespace std;
 
 int * kmc_seq_final(int clusters, int size, double *xcomp, double *ycomp)
 {
