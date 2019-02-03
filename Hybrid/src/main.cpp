@@ -1,7 +1,7 @@
 #include <utils.h>
 #include <mpi.h>
 #include <kmeansCluster.h>
-#include <omp.h>
+
 
 using namespace std;
 
