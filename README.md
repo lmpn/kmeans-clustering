@@ -1,15 +1,12 @@
-# Heapsort
+# K-Means Clustering Algorithm
 Computer Systems Engineering, Informatics Engineering, Universidade do Minho, Portugal
 
-Parallel implementations of the heapsort algorithm
-- Fine grained
-- Fine grained with atomics
-- Coarse grained
-- Coarse grained with atomics
+Sequential and parallel implementations of the K-Means Clustering algorithm
+- OpenMP
+- MPI
+- Sequential
 
 ## Technologies Used
 - C++ 11
-- C++ std::thread
-- C++ std::mutex
-- C++ std::atomic
-- C++ std::thread
+- MPI sync
+- OpenMP
